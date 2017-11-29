@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.adapter.RecycleAdapter;
@@ -24,7 +24,7 @@ public class StudyRecordActivity extends  BaseActivity {
     @Override
     protected  void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.study_record);
+        setContentView(R.layout.study_record_activity);
 
         ininData();
         initView();
@@ -33,8 +33,8 @@ public class StudyRecordActivity extends  BaseActivity {
 
     @Override
     public void initView() {
-        main = (Button)findViewById(R.id.main_activity);
-        skillTree = (Button)findViewById(R.id.skill_tree);
+        main = (ImageButton) findViewById(R.id.main_activity);
+        skillTree = (ImageButton)findViewById(R.id.skill_tree);
         recyclerView = (RecyclerView)findViewById(R.id.recyleListView);
         GridLayoutManager layoutManager = new GridLayoutManager(this,2);
         recyclerView.setLayoutManager(layoutManager);

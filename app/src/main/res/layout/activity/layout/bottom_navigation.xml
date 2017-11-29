@@ -14,23 +14,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <Button
+        <ImageButton
             android:id="@+id/study_record"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="11dp"
             android:layout_weight="1"
-            android:text="学习记录"/>
-        <Button
+            android:scaleType="centerInside"
+            android:src="@drawable/study"
+            android:background="#ffffff"/>
+        <ImageButton
             android:id="@+id/main_activity"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="11dp"
             android:layout_weight="1"
-            android:text="主页"/>
-        <Button
+            android:scaleType="centerInside"
+            android:src="@drawable/home"
+            android:background="#ffffff" />
+        <ImageButton
             android:id="@+id/skill_tree"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="11dp"
             android:layout_weight="1"
-            android:text="技能树"/>
+            android:scaleType="centerInside"
+            android:src="@drawable/skill"
+            android:background="#ffffff"/>
     </LinearLayout>
 </LinearLayout>

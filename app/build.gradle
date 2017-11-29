@@ -27,7 +27,7 @@ android {
 
                             'src/main/res/layout/main',
                             'src/main/res/layout/item',
-                            'src/main/res/layout/huffman',
+                            'src/main/res/layout/data_structure',
                             'src/main/res/layout/activity',
                             'src/main/res/layout',
                             'src/main/res'

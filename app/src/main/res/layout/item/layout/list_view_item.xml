@@ -7,91 +7,109 @@
     <TextView
         android:id="@+id/leaf1"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf2"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf3"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf4"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf5"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf6"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf7"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf8"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf9"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf10"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf11"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf12"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf13"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf14"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf15"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf16"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf17"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
     <TextView
         android:id="@+id/leaf18"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="35dp"
+        android:layout_weight="1"
+        android:background="@drawable/leaf_item"/>
 </LinearLayout>

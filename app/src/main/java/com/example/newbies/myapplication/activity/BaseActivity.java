@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,9 @@ import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private Intent intent = new Intent();
-    protected Button main;
-    protected Button studyRecord;
-    protected Button skillTree;
+    protected ImageButton main;
+    protected ImageButton studyRecord;
+    protected ImageButton skillTree;
 
     private List<Activity> activities = new ArrayList<>();
 

@@ -30,6 +30,9 @@
         <activity
             android:name=".activity.studyActivity.HuffmanActivity"
             android:launchMode="singleTask"/>
+        <activity
+            android:name=".activity.studyActivity.PokerGameActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>

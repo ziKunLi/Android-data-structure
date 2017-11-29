@@ -6,13 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.TextView;
 
 import com.example.newbies.myapplication.R;
-import com.example.newbies.myapplication.activity.MainActivity;
 import com.example.newbies.myapplication.activity.studyActivity.HuffmanActivity;
+import com.example.newbies.myapplication.activity.studyActivity.PokerGameActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +68,12 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.setClass(context, HuffmanActivity.class);
+                switch (position){
+                    case 0:intent.setClass(context, HuffmanActivity.class);break;
+                    case 1:intent.setClass(context, PokerGameActivity.class);break;
+                    default:break;
+                }
                 context.startActivity(intent);
-
             }
         });
     }

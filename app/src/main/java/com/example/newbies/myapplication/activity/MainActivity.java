@@ -1,13 +1,17 @@
 package com.example.newbies.myapplication.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+
 
 import com.example.newbies.myapplication.R;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * @author 李自坤
@@ -20,13 +24,15 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_activity);
+
         /**
          * 在activity中的oncreate()方法里初始化butterknife框架 ,注意初始化要放在setContentView()之后
          */
+        ButterKnife.bind(this);
         openComando = (Button)findViewById(R.id.commando);
-        studyRecord = (Button)findViewById(R.id.study_record);
-        skillTree = (Button)findViewById(R.id.skill_tree);
+        studyRecord = (ImageButton)findViewById(R.id.study_record);
+        skillTree = (ImageButton) findViewById(R.id.skill_tree);
         initListener();
     }
 
@@ -35,6 +41,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    @Override
     public void initListener(){
         openComando.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,6 +52,7 @@ public class MainActivity extends BaseActivity {
             }
         });
         studyRecord.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
                 openActivity(StudyRecordActivity.class);

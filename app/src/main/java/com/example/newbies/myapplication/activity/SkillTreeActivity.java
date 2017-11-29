@@ -3,7 +3,7 @@ package com.example.newbies.myapplication.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.example.newbies.myapplication.R;
 
@@ -15,9 +15,9 @@ public class SkillTreeActivity extends  BaseActivity {
     @Override
     protected  void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.skills_tree);
-        main = (Button)findViewById(R.id.main_activity);
-        studyRecord = (Button)findViewById(R.id.study_record);
+        setContentView(R.layout.skills_tree_activity);
+        main = (ImageButton)findViewById(R.id.main_activity);
+        studyRecord = (ImageButton)findViewById(R.id.study_record);
         initListener();
     }
 

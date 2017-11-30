@@ -9,25 +9,34 @@
         android:layout_weight="1">
 
         <EditText
-            android:id="@+id/fileName"
+            android:id="@+id/someText"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:hint="请输入文件名" />
 
         <Button
+            android:id="@+id/build"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="建立哈夫曼树" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listView"
+    <!--<ListView-->
+        <!--android:id="@+id/listView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="6">-->
+
+    <!--</ListView>-->
+
+    <FrameLayout
+        android:id="@+id/show"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6">
 
-    </ListView>
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,6 +44,7 @@
         android:layout_weight="1">
 
         <EditText
+            android:id="@+id/fileName"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

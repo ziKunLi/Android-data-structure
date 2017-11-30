@@ -16,33 +16,63 @@ import android.view.WindowManager;
  */
 public class CircleView extends View {
 
+
     /**
-     * 手机屏幕的宽
+     * 圆心所在横坐标
      */
-    private int width;
+    private float x;
     /**
-     * 手机屏幕的高
+     * 圆心所在纵坐标
      */
-    private int height;
+    private float y;
+    /**
+     * 圆的半径
+     */
+    private float radius;
+    /**
+     * 用于填充的文字
+     */
+    private String text;
+    /**
+     * 画笔
+     */
+    private Paint paint;
 
     public CircleView(Context context) {
         super(context);
-        init();
     }
 
-    public CircleView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
+    public CircleView(Context context, float x, float y, float radius, String text, Paint paint){
+        super(context);
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.text = text;
+        this.paint = paint;
     }
-
 
     /**
-     * 获得屏幕的宽和高
+     * 设置画笔
+     * @param paint
      */
-    public void init(){
-        WindowManager windowManager = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
-        width = windowManager.getDefaultDisplay().getWidth();
-        height = windowManager.getDefaultDisplay().getHeight();
+    public void setPaint(Paint paint) {
+        this.paint = paint;
+    }
+
+    /**
+     * 得到画笔
+     * @return
+     */
+    public Paint getPaint() {
+        return paint;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     /**
@@ -52,16 +82,10 @@ public class CircleView extends View {
     @Override
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
-
-        //创建一个画笔
-        Paint paint = new Paint();
-        //设置画笔的颜色
-        paint.setColor(Color.BLACK);
-        //设置画笔的锯齿效果
-        paint.setAntiAlias(true);
-        //设置画笔的风格（空心或实心）
-        paint.setStyle(Paint.Style.STROKE);
-        //绘制圆形
-        canvas.drawCircle(300,400,width/32,paint);
+        if(paint != null){
+            //绘制圆形
+            canvas.drawCircle(x,y,radius,paint);
+            canvas.drawText(text,x - text.length()/2, y + 10,paint);
+        }
     }
 }

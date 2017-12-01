@@ -8,6 +8,8 @@
 
     <color name="file_button">#bfcc5d</color>
     <color name="bottom_button">#ddeeff</color>
+    <color name="float_action_button">#805677fc</color>
+
     <color name="font1">#333333</color>
     <color name="font2">#666666</color>
     <color name="font3">#999999</color>

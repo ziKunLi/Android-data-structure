@@ -11,6 +11,8 @@ import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -25,11 +27,11 @@ import android.widget.Toast;
 
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.activity.BaseActivity;
+import com.example.newbies.myapplication.adapter.MatchHuffmanAdapter;
 import com.example.newbies.myapplication.util.Heap;
 import com.example.newbies.myapplication.util.HuffmanTree;
 import com.example.newbies.myapplication.view.CircleView;
 import com.example.newbies.myapplication.view.LineView;
-import com.example.newbies.myapplication.view.TableRecycleView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.io.BufferedReader;
@@ -39,7 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.TreeMap;
 
 import butterknife.ButterKnife;
 
@@ -49,8 +51,6 @@ import butterknife.ButterKnife;
  * @date 2017/11/26
  */
 public class HuffmanActivity extends BaseActivity{
-
-    private List<Integer> data  = new ArrayList<>();
 
     /**
      * 读取文件的按钮
@@ -69,26 +69,6 @@ public class HuffmanActivity extends BaseActivity{
      */
     private FloatingActionButton showHuffmanCode;
     /**
-     * 进行搜索的字符或哈夫曼编码
-     */
-    private EditText searchText;
-    /**
-     * 用于进行搜索匹配的按钮
-     */
-    private Button searchButton;
-    /**
-     * 退出编码表的按钮
-     */
-    private Button exit;
-    /**
-     * 用于展示匹配结果的按钮
-     */
-    private TextView printCodeOrChar;
-    /**
-     * 用于展示字符和编码对应关系的表格
-     */
-    private TableRecycleView codeTable;
-    /**
      * 文件路径
      */
     private String commonFilePath;
@@ -104,6 +84,26 @@ public class HuffmanActivity extends BaseActivity{
      * 储存叶子结点哈夫曼编码的字符串数组
      */
     private String[] leafCode = new String[26];
+    /**
+     * 记录字符出现频率
+     */
+    private int[] charTimes = new int[26];
+    /**
+     * 用于展示哈夫曼编码键值对的表格
+     */
+    private RecyclerView table;
+    /**
+     * 用于展示表格的数据
+     */
+    private TreeMap<String, String> data;
+    /**
+     * 用于展示匹配成功后的哈夫曼编码或者字符
+     */
+    private TextView printCodeOrChar;
+    /**
+     * 匹配哈夫曼编码或字符的输入框
+     */
+    private EditText matchText;
     /**
      * 手机屏幕的宽
      */
@@ -186,7 +186,7 @@ public class HuffmanActivity extends BaseActivity{
         showHuffmanCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showHuffmanCode();
             }
         });
     }
@@ -255,27 +255,12 @@ public class HuffmanActivity extends BaseActivity{
             }
         }
         String current = stringBuilder.toString().toLowerCase();
-        //用于记录各个字符频率的数组
-        int[] charTimes = new int[26];
         for(int i = 0; i < current.length(); i++){
             charTimes[current.charAt(i) - 97]++;
         }
         return  charTimes;
     }
 
-    public View  initPopupWindow(PopupWindow popupWindow, int layoutId){
-        //初始化PopupWindow的布局
-        View popView = getLayoutInflater().inflate(layoutId, null);
-        //popView即popupWindow的布局，ture设置focusAble
-        popupWindow = new PopupWindow(popView,
-                width/2,
-                ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        //必须设置BackgroundDrawable后setOutsideTouchable(true)才会有效
-        popupWindow.setBackgroundDrawable(new ColorDrawable());
-        //设置Gravity，让它显示在屏幕中心。
-        popupWindow.showAtLocation(show, Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
-        return popView;
-    }
     /**
      * @auther 李自坤
      * 弹出自定义的popWindow
@@ -283,7 +268,13 @@ public class HuffmanActivity extends BaseActivity{
     public void inputText() {
 
         if (inputPopupWindow == null) {
-            View popView =  initPopupWindow(inputPopupWindow, R.layout.input_popupwindow);
+            //初始化PopupWindow的布局
+            View popView = getLayoutInflater().inflate(R.layout.input_popupwindow, null);
+            inputPopupWindow = new PopupWindow(popView,width/2,ViewGroup.LayoutParams.WRAP_CONTENT, true);
+            //必须设置BackgroundDrawable后setOutsideTouchable(true)才会有效
+            inputPopupWindow.setBackgroundDrawable(new ColorDrawable());
+            //设置Gravity，让它显示在屏幕中心。
+            inputPopupWindow.showAtLocation(show, Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
             //点击外部关闭。
             inputPopupWindow.setOutsideTouchable(true);
             //设置item的点击监听
@@ -291,11 +282,18 @@ public class HuffmanActivity extends BaseActivity{
             popView.findViewById(R.id.sure).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //初始化哈夫曼编码
+                    for(int i = 0 ; i < 26; i++){
+                        leafCode[i] = null;
+                        charTimes[i] = 0;
+                    }
                     HuffmanTree tree = getHuffmanTree(getCharTimeByEditText());
+                    //如果输入的字符串是错误的，那么该哈夫曼树就为空
                     if(tree == null){
                         return;
                     }
                     HuffmanTree.Node root = tree.root;
+
                     getAllCode(root);
                     Log.d("tag", show.getChildCount() + "");
                     if(show.getChildCount() > 1){
@@ -327,18 +325,26 @@ public class HuffmanActivity extends BaseActivity{
 
     public void showHuffmanCode(){
         if (codePopupWindow == null) {
-            View popView =  initPopupWindow(codePopupWindow, R.layout.show_huffman_code);
-            //点击外部关闭。
-            codePopupWindow.setOutsideTouchable(true);
+            //初始化PopupWindow的布局
+            View popView = getLayoutInflater().inflate(R.layout.show_huffman_code, null);
+            //设置PopupWindow的大小，ture设置focusAble
+            codePopupWindow = new PopupWindow(popView, width*3/4,height, true);
+            //必须设置BackgroundDrawable后setOutsideTouchable(true)才会有效
+            codePopupWindow.setBackgroundDrawable(new ColorDrawable());
+            //设置Gravity，让它显示在屏幕中心。
+            codePopupWindow.showAtLocation(show, Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM, 0, 0);
+            //加载表格
+            table = (RecyclerView)popView.findViewById(R.id.table);
             //在popupWindow中的按钮只能在popupWindow中获取，不然会获取失败，导致空引用异常
-            searchText = popView.findViewById(R.id.searchText);
-//            codeTable = popView.findViewById(R.id.table);
-
+            matchText = popView.findViewById(R.id.searchText);
+            printCodeOrChar =  popView.findViewById(R.id.printCodeOrChar);
+            //匹配事件
             //设置item的点击监听
             popView.findViewById(R.id.searchButton).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    ArrayList<String> deCode = deCode(leafCode,charTimes, String.valueOf(matchText.getText()));
+                    printCodeOrChar.setText(deCode.toString());
                 }
             });
             popView.findViewById(R.id.exit).setOnClickListener(new View.OnClickListener() {
@@ -355,9 +361,27 @@ public class HuffmanActivity extends BaseActivity{
                 }
             });
         } else {
-            codePopupWindow.showAtLocation(show, Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+            codePopupWindow.showAtLocation(show, Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM, 0, 0);
+            matchText.setText("");
+            printCodeOrChar.setText("哈夫曼编码表");
         }
-        backgroundAlpha(0.3f);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,4);
+        table.setLayoutManager(layoutManager);
+        initTable();
+        table.setAdapter(new MatchHuffmanAdapter(data));
+        backgroundAlpha(0.5f);
+    }
+
+    /**
+     * 初始化表格的数据
+     */
+    public void initTable(){
+        data = new TreeMap<>();
+        for(int i = 0 ; i < 26; i++){
+            if(leafCode[i] != null){
+                data.put((char)(i + 65)+"", leafCode[i]);
+            }
+        }
     }
 
     /**
@@ -477,11 +501,23 @@ public class HuffmanActivity extends BaseActivity{
 
     /**
      * 根据哈夫曼编码得到字符
-     * @param code
+     * @param charTimes
      * @return
      */
-    public String getStringByHuffmanCode(String code){
-        return null;
+    public static ArrayList<String> deCode(String[] leafCode, int[] charTimes, String text) {
+        int count = 0;
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < text.length(); i++) {
+            String temp = text.substring(count, i + 1);
+
+            for (int j = 0; j < leafCode.length; j++) {
+                if (charTimes[j] != 0 && leafCode[j].equals(temp)) {
+                    list.add(temp + " is " + (char)(j + 65));
+                    count = i + 1;
+                }
+            }
+        }
+        return list;
     }
 
     @Override

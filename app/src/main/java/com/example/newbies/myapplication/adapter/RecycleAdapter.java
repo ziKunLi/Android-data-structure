@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by NewBies on 2017/11/26.
+ * @author NewBies
+ * @date 2017/11/26
  */
-
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
 
     public List<String> list = new ArrayList<>();

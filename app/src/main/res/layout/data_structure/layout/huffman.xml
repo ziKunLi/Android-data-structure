@@ -17,17 +17,21 @@
             android:layout_height="wrap_content"
             android:id="@+id/buildByFile"
             fab:fab_colorNormal="@color/colorAccent"
-            fab:fab_size="mini"/>
+            fab:fab_size="mini"
+            fab:fab_title="fasdfa"/>
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/buildByText"
             fab:fab_colorNormal="@color/colorAccent"
-            fab:fab_size="mini"/>
+            fab:fab_size="mini"
+            fab:fab_title="fasdfa"/>
         <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/showHuffmanCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorAccent"
-            fab:fab_size="mini"/>
+            fab:fab_size="mini"
+            fab:fab_title="fasdfa"/>
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </FrameLayout>

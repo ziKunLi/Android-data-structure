@@ -28,8 +28,8 @@ import com.example.newbies.myapplication.activity.BaseActivity;
 import com.example.newbies.myapplication.util.Heap;
 import com.example.newbies.myapplication.util.HuffmanTree;
 import com.example.newbies.myapplication.view.CircleView;
-import com.example.newbies.myapplication.view.InputPopupWindow;
 import com.example.newbies.myapplication.view.LineView;
+import com.example.newbies.myapplication.view.TableRecycleView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.io.BufferedReader;
@@ -44,9 +44,10 @@ import java.util.List;
 import butterknife.ButterKnife;
 
 /**
- * Created by NewBies on 2017/11/26.
+ *
+ * @author NewBies
+ * @date 2017/11/26
  */
-
 public class HuffmanActivity extends BaseActivity{
 
     private List<Integer> data  = new ArrayList<>();
@@ -63,6 +64,30 @@ public class HuffmanActivity extends BaseActivity{
      * 通过输入普通文本建立哈夫曼树
      */
     private FloatingActionButton buildByText;
+    /**
+     * 用于打开显示哈夫曼编码的按钮
+     */
+    private FloatingActionButton showHuffmanCode;
+    /**
+     * 进行搜索的字符或哈夫曼编码
+     */
+    private EditText searchText;
+    /**
+     * 用于进行搜索匹配的按钮
+     */
+    private Button searchButton;
+    /**
+     * 退出编码表的按钮
+     */
+    private Button exit;
+    /**
+     * 用于展示匹配结果的按钮
+     */
+    private TextView printCodeOrChar;
+    /**
+     * 用于展示字符和编码对应关系的表格
+     */
+    private TableRecycleView codeTable;
     /**
      * 文件路径
      */
@@ -88,15 +113,13 @@ public class HuffmanActivity extends BaseActivity{
      */
     private int height;
     /**
-     * 绘制线条时起始点相对于圆心的X轴偏移量
+     * 用于显示输入提示框的popupWindow
      */
-    private float offsetStartX;
+    private PopupWindow inputPopupWindow = null;
     /**
-     * 绘制线条时起始点相对于圆心的Y轴偏移量
+     * 用于显示哈夫曼编码的popupWindow
      */
-    private float offsetStartY;
-
-    private PopupWindow mPopupWindow = null;
+    private PopupWindow codePopupWindow = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -121,6 +144,7 @@ public class HuffmanActivity extends BaseActivity{
     public void initView() {
         buildByFile = (FloatingActionButton)findViewById(R.id.buildByFile);
         buildByText = (FloatingActionButton)findViewById(R.id.buildByText);
+        showHuffmanCode = (FloatingActionButton)findViewById(R.id.showHuffmanCode);
         show = (FrameLayout)findViewById(R.id.show);
 
         //创建一个画笔
@@ -140,6 +164,7 @@ public class HuffmanActivity extends BaseActivity{
         WindowManager windowManager = (WindowManager)HuffmanActivity.this.getSystemService(Context.WINDOW_SERVICE);
         width = windowManager.getDefaultDisplay().getWidth();
         height = windowManager.getDefaultDisplay().getHeight();
+
     }
 
     @Override
@@ -154,7 +179,14 @@ public class HuffmanActivity extends BaseActivity{
         buildByText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popUpMyOverflow();
+                inputText();
+            }
+        });
+
+        showHuffmanCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
@@ -230,27 +262,30 @@ public class HuffmanActivity extends BaseActivity{
         }
         return  charTimes;
     }
+
+    public View  initPopupWindow(PopupWindow popupWindow, int layoutId){
+        //初始化PopupWindow的布局
+        View popView = getLayoutInflater().inflate(layoutId, null);
+        //popView即popupWindow的布局，ture设置focusAble
+        popupWindow = new PopupWindow(popView,
+                width/2,
+                ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        //必须设置BackgroundDrawable后setOutsideTouchable(true)才会有效
+        popupWindow.setBackgroundDrawable(new ColorDrawable());
+        //设置Gravity，让它显示在屏幕中心。
+        popupWindow.showAtLocation(show, Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+        return popView;
+    }
     /**
      * @auther 李自坤
      * 弹出自定义的popWindow
      */
-    public void popUpMyOverflow() {
+    public void inputText() {
 
-        if (mPopupWindow == null) {
-            //初始化PopupWindow的布局
-            View popView = getLayoutInflater().inflate(R.layout.input_popupwindow, null);
-            //popView即popupWindow的布局，ture设置focusAble
-            mPopupWindow = new PopupWindow(popView,
-                    width/2,
-                    ViewGroup.LayoutParams.WRAP_CONTENT, true);
-            //必须设置BackgroundDrawable后setOutsideTouchable(true)才会有效
-            mPopupWindow.setBackgroundDrawable(new ColorDrawable());
+        if (inputPopupWindow == null) {
+            View popView =  initPopupWindow(inputPopupWindow, R.layout.input_popupwindow);
             //点击外部关闭。
-            mPopupWindow.setOutsideTouchable(true);
-            //设置一个动画。
-            mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
-            //设置Gravity，让它显示在右上角。
-            mPopupWindow.showAtLocation(show, Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+            inputPopupWindow.setOutsideTouchable(true);
             //设置item的点击监听
             someText = popView.findViewById(R.id.someText);
             popView.findViewById(R.id.sure).setOnClickListener(new View.OnClickListener() {
@@ -268,27 +303,63 @@ public class HuffmanActivity extends BaseActivity{
                     }
                     show.addView(new CircleView(HuffmanActivity.this, width/2, 150f, 47f,root.weight + "",paint));
                     showHuffman(root, width/2,150f, 1);
-                    mPopupWindow.dismiss();
+                    inputPopupWindow.dismiss();
                 }
             });
             popView.findViewById(R.id.cencle).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mPopupWindow.dismiss();
+                    inputPopupWindow.dismiss();
                 }
             });
             //设置popupWindow关闭的事件
-            mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            inputPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
                     backgroundAlpha(1f);
                 }
             });
         } else {
-            mPopupWindow.showAtLocation(show, Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+            inputPopupWindow.showAtLocation(show, Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
         }
         backgroundAlpha(0.3f);
     }
+
+    public void showHuffmanCode(){
+        if (codePopupWindow == null) {
+            View popView =  initPopupWindow(codePopupWindow, R.layout.show_huffman_code);
+            //点击外部关闭。
+            codePopupWindow.setOutsideTouchable(true);
+            //在popupWindow中的按钮只能在popupWindow中获取，不然会获取失败，导致空引用异常
+            searchText = popView.findViewById(R.id.searchText);
+//            codeTable = popView.findViewById(R.id.table);
+
+            //设置item的点击监听
+            popView.findViewById(R.id.searchButton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+            popView.findViewById(R.id.exit).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    codePopupWindow.dismiss();
+                }
+            });
+            //设置popupWindow关闭的事件
+            codePopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    backgroundAlpha(1f);
+                }
+            });
+        } else {
+            codePopupWindow.showAtLocation(show, Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+        }
+        backgroundAlpha(0.3f);
+    }
+
     /**
      * 设置添加屏幕的背景透明度
      * @param bgAlpha

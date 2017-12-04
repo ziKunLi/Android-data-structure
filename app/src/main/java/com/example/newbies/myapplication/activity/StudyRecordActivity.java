@@ -14,9 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by NewBies on 2017/11/23.
+ *
+ * @author NewBies
+ * @date 2017/11/23
  */
-
 public class StudyRecordActivity extends  BaseActivity {
 
     private List<String> data = new ArrayList<>();

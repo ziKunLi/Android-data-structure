@@ -6,9 +6,12 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.example.newbies.myapplication.R;
+import com.gigamole.library.navigationtabstrip.NavigationTabStrip;
 
 /**
- * Created by NewBies on 2017/11/23.
+ *
+ * @author NewBies
+ * @date 2017/11/23
  */
 
 public class SkillTreeActivity extends  BaseActivity {
@@ -16,8 +19,8 @@ public class SkillTreeActivity extends  BaseActivity {
     protected  void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.skills_tree_activity);
-        main = (ImageButton)findViewById(R.id.main_activity);
-        studyRecord = (ImageButton)findViewById(R.id.study_record);
+        bottom_button = (NavigationTabStrip)findViewById(R.id.bottom_button);
+        bottom_button.setTabIndex(2,true);
         initListener();
     }
 
@@ -28,24 +31,31 @@ public class SkillTreeActivity extends  BaseActivity {
 
     @Override
     public void initListener() {
-        main.setOnClickListener(new View.OnClickListener() {
+        bottom_button.setOnTabStripSelectedIndexListener(new NavigationTabStrip.OnTabStripSelectedIndexListener() {
             @Override
-            public void onClick(View v) {
-                openActivity(MainActivity.class);
-                finish();
+            public void onStartTabSelected(String title, int index) {
+                switch (index){
+                    case 0:
+                        openActivity(StudyRecordActivity.class);
+                        finish();
+                        break;
+                    case 1:
+                        openActivity(MainActivity.class);
+                        finish();
+                    default:break;
+                }
             }
-        });
-        studyRecord.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
-                openActivity(StudyRecordActivity.class);
-                finish();
+            public void onEndTabSelected(String title, int index) {
+
             }
         });
     }
 
     @Override
     public void onBackPressed(){
+        //回到桌面
         Intent home = new Intent(Intent.ACTION_MAIN);
         home.addCategory(Intent.CATEGORY_HOME);
         startActivity(home);

@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 
+import com.example.newbies.myapplication.R;
+import com.gigamole.library.navigationtabstrip.NavigationTabStrip;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +21,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected ImageButton main;
     protected ImageButton studyRecord;
     protected ImageButton skillTree;
+    protected NavigationTabStrip bottom_button;
 
     private List<Activity> activities = new ArrayList<>();
 

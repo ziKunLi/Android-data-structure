@@ -122,7 +122,7 @@ public class HuffmanActivity extends BaseActivity{
     private PopupWindow codePopupWindow = null;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         // 隐藏状态栏，该句话一定要放在setContentView(R.layout.huffman);之前
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);

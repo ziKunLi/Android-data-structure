@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.example.newbies.myapplication.R;
+import com.example.newbies.myapplication.activity.studyActivity.CoinActivity;
 import com.example.newbies.myapplication.adapter.RecycleAdapter;
+import com.gigamole.library.navigationtabstrip.NavigationTabStrip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,29 +36,37 @@ public class StudyRecordActivity extends  BaseActivity {
 
     @Override
     public void initView() {
-        main = (ImageButton) findViewById(R.id.main_activity);
-        skillTree = (ImageButton)findViewById(R.id.skill_tree);
+        bottom_button = (NavigationTabStrip)findViewById(R.id.bottom_button);
+        bottom_button.setTabIndex(0,true);
         recyclerView = (RecyclerView)findViewById(R.id.recyleListView);
         GridLayoutManager layoutManager = new GridLayoutManager(this,2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new RecycleAdapter(data));
+
     }
 
     @Override
     public void initListener() {
 
-        main.setOnClickListener(new View.OnClickListener() {
+        bottom_button.setOnTabStripSelectedIndexListener(new NavigationTabStrip.OnTabStripSelectedIndexListener() {
             @Override
-            public void onClick(View v) {
-                openActivity(MainActivity.class);
-                finish();
+            public void onStartTabSelected(String title, int index) {
+                switch (index){
+                    case 1:
+                        openActivity(MainActivity.class);
+                        finish();
+                        break;
+                    case 2:
+                        openActivity(SkillTreeActivity.class);
+                        finish();
+                        break;
+                    default:break;
+                }
             }
-        });
-        skillTree.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
-                openActivity(SkillTreeActivity.class);
-                finish();
+            public void onEndTabSelected(String title, int index) {
+
             }
         });
     }

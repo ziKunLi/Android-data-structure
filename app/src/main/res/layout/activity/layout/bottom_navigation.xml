@@ -1,48 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#999999"/>
-
-    <LinearLayout
+        android:background="@color/font3"/>
+    <com.gigamole.library.navigationtabstrip.NavigationTabStrip
+        android:id="@+id/bottom_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <ImageButton
-            android:id="@+id/study_record"
-            android:layout_width="0dp"
-            android:layout_height="42dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="11dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/study"
-            android:background="#ffffff"/>
-        <ImageButton
-            android:id="@+id/main_activity"
-            android:layout_width="0dp"
-            android:layout_height="42dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="11dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/home"
-            android:background="#ffffff" />
-        <ImageButton
-            android:id="@+id/skill_tree"
-            android:layout_width="0dp"
-            android:layout_height="42dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="11dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/skill"
-            android:background="#ffffff"/>
-    </LinearLayout>
+        android:layout_gravity="center"
+        app:nts_active_color="#42a4d1"
+        app:nts_color="#42a4d1"
+        app:nts_gravity="bottom"
+        app:nts_corners_radius="1dp"
+        app:nts_inactive_color="#ff1a1e23"
+        app:nts_size="15sp"
+        app:nts_titles="@array/titles"
+        app:nts_weight="3dp"/>
+
 </LinearLayout>

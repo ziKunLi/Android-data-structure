@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
@@ -25,6 +26,7 @@
             android:gravity="center"
             android:text="硬币数量："/>
         <Spinner
+            android:id="@+id/coin_count"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -36,6 +38,7 @@
             android:gravity="center"
             android:text="游戏模式："/>
         <Spinner
+            android:id="@+id/game_mode"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -59,11 +62,13 @@
         android:gravity="center"
         android:orientation="horizontal">
         <Button
+            android:id="@+id/a"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="上一步"/>
+            android:text="目标"/>
         <Button
+            android:id="@+id/answer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -77,11 +82,33 @@
         android:gravity="center"
         android:orientation="horizontal">
         <Button
+            android:id="@+id/previous"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="上一步"/>
+        <Button
+            android:id="@+id/next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="下一步"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/restart"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="重新开始"/>
         <Button
+            android:id="@+id/remind"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

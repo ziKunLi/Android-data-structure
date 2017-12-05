@@ -369,7 +369,7 @@ public class HuffmanActivity extends BaseActivity{
         table.setLayoutManager(layoutManager);
         initTable();
         table.setAdapter(new MatchHuffmanAdapter(data));
-        backgroundAlpha(0.5f);
+        backgroundAlpha(0.33f);
     }
 
     /**

@@ -1,10 +1,16 @@
 package com.example.newbies.myapplication.activity.studyActivity;
 
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.activity.BaseActivity;
+import com.example.newbies.myapplication.adapter.CoinAdapt;
 
 /**
  *
@@ -13,6 +19,16 @@ import com.example.newbies.myapplication.activity.BaseActivity;
  */
 public class CoinActivity extends BaseActivity {
 
+    private TextView description;
+    private Spinner coin_count;
+    private Spinner game_mode;
+    private Button previous;
+    private Button restart;
+    private Button answer;
+    private Button remind;
+    private RecyclerView someCoin;
+    private GridLayoutManager layoutManager;
+    private CoinAdapt coinAdapt;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -22,7 +38,18 @@ public class CoinActivity extends BaseActivity {
     }
     @Override
     public void initView() {
+        description = (TextView)findViewById(R.id.description);
+        coin_count = (Spinner)findViewById(R.id.coin_count);
+        game_mode = (Spinner)findViewById(R.id.game_mode);
+        previous = (Button)findViewById(R.id.previous);
+        restart = (Button)findViewById(R.id.restart);
+        answer = (Button)findViewById(R.id.answer);
+        remind = (Button)findViewById(R.id.remind);
 
+        someCoin = (RecyclerView)findViewById(R.id.someCoin);
+        layoutManager = new GridLayoutManager(this, 4);
+//        coinAdapt = new CoinAdapt(4,16);
+//        someCoin.setAdapter();
     }
 
     @Override

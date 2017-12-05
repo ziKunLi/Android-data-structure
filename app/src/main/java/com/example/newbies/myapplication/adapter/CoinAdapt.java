@@ -61,6 +61,6 @@ public class CoinAdapt extends RecyclerView.Adapter<CoinAdapt.ViewHolder>{
 
     @Override
     public int getItemCount() {
-        return 0;
+        return data.size();
     }
 }

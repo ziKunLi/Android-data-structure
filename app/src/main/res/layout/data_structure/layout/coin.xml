@@ -22,27 +22,31 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:gravity="center"
             android:text="硬币数量："/>
-        <Spinner
+        <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/coin_count"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:layout_weight="1"/>
+            android:layout_weight="5"
+            android:textSize="9sp"
+            android:entries="@array/coin_count"/>
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:gravity="center"
             android:text="游戏模式："/>
-        <Spinner
+        <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/game_mode"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:layout_weight="1"/>
+            android:layout_weight="5"
+            android:textSize="9sp"
+            android:entries="@array/game_mode"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,37 +66,18 @@
         android:gravity="center"
         android:orientation="horizontal">
         <Button
-            android:id="@+id/a"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="目标"/>
-        <Button
-            android:id="@+id/answer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="查看答案"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="horizontal">
-        <Button
             android:id="@+id/previous"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="上一步"/>
+
         <Button
-            android:id="@+id/next"
+            android:id="@+id/remind"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="下一步"/>
+            android:text="提示"/>
     </LinearLayout>
 
     <LinearLayout
@@ -108,10 +93,10 @@
             android:layout_weight="1"
             android:text="重新开始"/>
         <Button
-            android:id="@+id/remind"
+            android:id="@+id/answer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="提示"/>
+            android:text="查看答案"/>
     </LinearLayout>
 </LinearLayout>

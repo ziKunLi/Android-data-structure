@@ -150,7 +150,7 @@ public class HuffmanActivity extends BaseActivity{
         //创建一个画笔
         paint = new Paint();
         //设置画笔的颜色
-        paint.setColor(Color.RED);
+        paint.setColor(Color.BLACK);
         //设置画笔的锯齿效果
         paint.setAntiAlias(true);
         //设置画笔的风格（空心或实心）

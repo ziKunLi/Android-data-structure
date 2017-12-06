@@ -51,6 +51,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:26.0.0-beta1'
     compile 'com.android.support:cardview-v7:26.0.0-beta1'
     compile 'com.android.support:design:26.0.0-beta1'
+    //浮动按钮
     compile 'com.getbase:floatingactionbutton:1.10.1'
+    //导航栏
     compile 'com.github.devlight.navigationtabstrip:library:1.0.1'
 }

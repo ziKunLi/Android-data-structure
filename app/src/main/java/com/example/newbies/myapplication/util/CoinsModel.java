@@ -34,11 +34,13 @@ public class CoinsModel {
      * 反面
      */
     private final char OPPOSITE = 'T';
-    public CoinsModel(int coins){
+    private GameMode game_mode = GameMode.STRIGHT;
+    public CoinsModel(int coins, GameMode game_mode){
         count = coins;
         row = (int) Math.sqrt(coins);
         //计算coins枚硬币一共有多少中情况
         n = (int) Math.pow(2,coins);
+        this.game_mode = game_mode;
         //创建一个Edges
         List<AbstractGraph.Edge> edges = getEdges();
 
@@ -60,9 +62,9 @@ public class CoinsModel {
             //判断该结点一共有几个相邻结点
             for(int j = 0; j < count; j++){
                 //得到顶点u的结点
-                char[] node = getNode(i);
+                ArrayList<Character> node = getNode(i);
                 //这里可以理解为不翻动已经翻过来的硬币，避免重复翻动
-                if(node[j] == POSITIVE){
+                if(node.get(j) == POSITIVE){
                     int v = getFlippedNode(node, j);
                     edges.add(new AbstractGraph.Edge(v, i));
                 }
@@ -77,15 +79,24 @@ public class CoinsModel {
      * @param position
      * @return
      */
-    public int getFlippedNode(char[] node, int position){
+    public int getFlippedNode(ArrayList<Character> node, int position){
         int row = position / this.row;
         int column = position % this.row;
 
         flipACell(node, row, column);
-        flipACell(node, row - 1, column);
-        flipACell(node, row + 1, column);
-        flipACell(node, row, column - 1);
-        flipACell(node, row, column + 1);
+        //根据不同的游戏模式，进行不同的翻转
+        if(game_mode == GameMode.STRIGHT){
+            flipACell(node, row - 1, column);
+            flipACell(node, row + 1, column);
+            flipACell(node, row, column - 1);
+            flipACell(node, row, column + 1);
+        }
+        else {
+            flipACell(node, row - 1, column - 1);
+            flipACell(node, row - 1, column + 1);
+            flipACell(node, row + 1, column - 1);
+            flipACell(node, row + 1, column + 1);
+        }
 
         return getIndex(node);
     }
@@ -96,16 +107,16 @@ public class CoinsModel {
      * @param row
      * @param column
      */
-    public void flipACell(char[] node, int row, int column){
+    public void flipACell(ArrayList<Character> node, int row, int column){
         if(row >= 0 && row <= this.row - 1  && column >= 0 && column <= this.row - 1 ){
 
-            if(node[row * this.row + column] == POSITIVE){
+            if(node.get(row * this.row + column) == POSITIVE){
                 //将H变为T
-                node[row * this.row + column] = 'T';
+                node.set(row * this.row + column,'T');
             }
             else{
                 //将T变为H
-                node[row * this.row + column] = 'H';
+                node.set(row * this.row + column,'H');
             }
         }
     }
@@ -115,11 +126,11 @@ public class CoinsModel {
      * @param node
      * @return
      */
-    public int getIndex(char[] node){
+    public int getIndex(ArrayList<Character> node){
         int result = 0;
 
         for(int i = 0; i < count; i++){
-            if(node[i] == 'T'){
+            if(node.get(i) == 'T'){
                 result = result * 2 + 1;
             }
             else {
@@ -135,17 +146,20 @@ public class CoinsModel {
      * @param index
      * @return
      */
-    public char[] getNode(int index){
-        char[] result = new char[count];
+    public ArrayList<Character> getNode(int index){
+        ArrayList<Character> result = new ArrayList<Character>(count);
 
+        for(int i = 0 ; i < count; i++){
+            result.add(' ');
+        }
         //解析结点，将整形结点解析成char数组
         for(int i = 0; i < count; i++){
             int digit = index % 2;
             if(digit == 0){
-                result[count - i - 1] = 'H';
+                result.set(count - i - 1,'H');
             }
             else {
-                result[count - i - 1] = 'T';
+                result.set(count - i - 1,'T');
             }
             index = index / 2;
         }
@@ -154,7 +168,7 @@ public class CoinsModel {
     }
 
     /**
-     * 得到指定结点的最短路径
+     * 得到指定结点的最短路径集合
      * @param nodeIndex
      * @return
      */
@@ -162,4 +176,11 @@ public class CoinsModel {
         return tree.getPath(nodeIndex);
     }
 
+    public GameMode getGame_mode() {
+        return game_mode;
+    }
+
+    public void setGame_mode(GameMode game_mode) {
+        this.game_mode = game_mode;
+    }
 }

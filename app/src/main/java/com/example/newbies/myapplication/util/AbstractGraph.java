@@ -83,36 +83,43 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 	}
 
 	/**返回该图中顶点的个数**/
+	@Override
 	public int getSize(){
 		return vertices.size();
 	}
 
 	/**返回图中所有顶点**/
+	@Override
 	public List<V> getVertices(){
 		return vertices;
 	}
 
 	/**返回特定角标处的顶点**/
+	@Override
 	public V getVertex(int index){
 		return vertices.get(index);
 	}
 
 	/**返回指定角标的角标**/
+	@Override
 	public int getIndex(V v){
 		return vertices.indexOf(v);
 	}
 
 	/**返回特定角标处顶点的相邻顶点**/
+	@Override
 	public List<Integer> getNeighbors(int index){
 		return neighbors.get(index);
 	}
 
 	/**返回指定顶点的度数**/
+	@Override
 	public int getDegree(int v){
 		return neighbors.get(v).size();
 	}
 
 	/**返回一个邻接矩阵**/
+	@Override
 	public int[][] getAdjacencyMatrix(){
 		int[][] adjacencyMatrix = new int[getSize()][getSize()];
 
@@ -127,6 +134,7 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 	}
 
 	/**打印邻接矩阵**/
+	@Override
 	public void printAdjacencyMatrix(){
 		int[][] adjacencyMatrix = getAdjacencyMatrix();
 		for(int i = 0; i < adjacencyMatrix.length; i++){
@@ -139,6 +147,7 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 	}
 
 	/**打印edges(相当于邻接线性表)**/
+	@Override
 	public void printEdges(){
 		for(int u = 0; u < neighbors.size(); u++){
 			System.out.print("Vertex " + u + ": ");
@@ -153,6 +162,7 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 	 * 得到一个邻接线性表
 	 * @return
 	 */
+	@Override
 	public List<List<Integer>> getList(){
 		return neighbors;
 	}
@@ -183,11 +193,13 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 	}
 
 	/**获得从顶点v开始的DFS树，并在27.6进行讨论**/
+	@Override
 	public Tree dfs(int v){
 		List<Integer> searchOrders = new ArrayList<Integer>();
 		int[] parent = new int[vertices.size()];
 		for(int i = 0; i < parent.length; i++){
-			parent[i] = -1;//初始化parent[i]为-1
+			//初始化parent[i]为-1
+			parent[i] = -1;
 		}
 		//标记访问顶点
 		boolean[] isVisited = new boolean[vertices.size()];
@@ -203,23 +215,28 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 	private void dfs(int v, int[] parent, List<Integer> searchOrders, boolean[] isVisited){
 		//存储已经被访问的顶点
 		searchOrders.add(v);
-		isVisited[v] = true;//顶点v已经被访问
+		//顶点v已经被访问
+		isVisited[v] = true;
 
 		for(int i : neighbors.get(v)){
 			if(!isVisited[i]){
-				parent[i] = v;//顶点i的父元素是v
-				dfs(i, parent, searchOrders, isVisited);//递归查找
+				//顶点i的父元素是v
+				parent[i] = v;
+				//递归查找
+				dfs(i, parent, searchOrders, isVisited);
 			}
 		}
 	}
 
 	/**获得从顶点v开始的bfs树**/
+	@Override
 	public Tree bfs(int v){
 		List<Integer> searchOrders = new ArrayList<Integer>();
 		int[] parent = new int[vertices.size()];
 
 		for(int i = 0; i < parent.length; i++){
-			parent[i] = -1;//初始化为-1
+			//初始化为-1
+			parent[i] = -1;
 		}
 
 		//申明一个队列

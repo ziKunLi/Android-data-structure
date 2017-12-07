@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.activity.studyActivity.CoinActivity;
 import com.example.newbies.myapplication.activity.studyActivity.HuffmanActivity;
+import com.example.newbies.myapplication.activity.studyActivity.JDCShowActivity;
 import com.example.newbies.myapplication.activity.studyActivity.PokerGameActivity;
 
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                     case 0:intent.setClass(context, HuffmanActivity.class);break;
                     case 1:intent.setClass(context, PokerGameActivity.class);break;
                     case 2:intent.setClass(context, CoinActivity.class);break;
+                    case 3:intent.setClass(context, JDCShowActivity.class);break;
                     default:break;
                 }
                 context.startActivity(intent);

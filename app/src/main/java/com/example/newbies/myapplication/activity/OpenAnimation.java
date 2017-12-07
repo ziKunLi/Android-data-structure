@@ -8,6 +8,9 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.example.newbies.myapplication.R;
+import com.yasic.library.particletextview.MovingStrategy.RandomMovingStrategy;
+import com.yasic.library.particletextview.Object.ParticleTextViewConfig;
+import com.yasic.library.particletextview.View.ParticleTextView;
 
 
 /**
@@ -17,7 +20,7 @@ import com.example.newbies.myapplication.R;
  */
 public class OpenAnimation extends BaseActivity {
 
-    private ImageView open_img;
+    private  ImageView open_img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +28,8 @@ public class OpenAnimation extends BaseActivity {
         // 隐藏状态栏，该句话一定要放在setContentView(R.layout.huffman);之前
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.open_anim);
-        open_img = (ImageView)findViewById(R.id.open_img);
+        initView();
+        ImageView open_img = (ImageView) findViewById(R.id.open_img);
         initView();
         initListener();
         AlphaAnimation anima = new AlphaAnimation(0.1f, 1.0f);
@@ -35,6 +39,7 @@ public class OpenAnimation extends BaseActivity {
         anima.setAnimationListener(new AnimationImpl());
 
     }
+
 
     private class AnimationImpl implements Animation.AnimationListener {
 

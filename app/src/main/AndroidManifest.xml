@@ -41,6 +41,9 @@
         <activity
             android:name=".activity.studyActivity.CoinActivity"
             android:launchMode="singleTask"/>
+        <activity
+            android:name=".activity.studyActivity.JDCShowActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>

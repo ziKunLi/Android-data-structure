@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.support.v7.widget.AppCompatSpinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.activity.BaseActivity;
@@ -20,8 +19,6 @@ import com.example.newbies.myapplication.util.CoinsModel;
 import com.example.newbies.myapplication.util.GameMode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  *
@@ -63,12 +60,12 @@ public class CoinActivity extends BaseActivity {
     /**
      * 两种硬币数量的模型
      */
-    private CoinsModel[] coinsModel = new CoinsModel[2];
+    private CoinsModel[] coinsModel = new CoinsModel[4];
     private ArrayList<Character> data;
     /**
      * 游戏模式
      */
-    private GameMode gameMode;
+    private GameMode gameMode = GameMode.STRIGHT;
     private int row = 3;
     private ArrayList<Integer> path;
 //    /**
@@ -102,8 +99,10 @@ public class CoinActivity extends BaseActivity {
         remind = (Button)findViewById(R.id.remind);
 
         //将两种硬币数量的情况初始化，而不在以后使用时边使用边初始化，降低了系统负担
-        coinsModel[0] = new CoinsModel(9, GameMode.STRIGHT);
-        coinsModel[1] = new CoinsModel(16, GameMode.STRIGHT);
+        coinsModel[0] = new CoinsModel(9, gameMode);
+        coinsModel[1] = new CoinsModel(16, gameMode);
+        coinsModel[2] = new CoinsModel(9, GameMode.OBLIQUE);
+        coinsModel[3] = new CoinsModel(16, GameMode.OBLIQUE);
         someCoin = (RecyclerView)findViewById(R.id.someCoin);
         layoutManager = new GridLayoutManager(this, 3);
         someCoin.setLayoutManager(layoutManager);
@@ -144,27 +143,59 @@ public class CoinActivity extends BaseActivity {
             }
         });
 
+        //查看答案
         answer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getAnswer();
             }
         });
+
+        //重新开始
+        restart.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                int offset = (gameMode == GameMode.STRIGHT) ? 3 : 1;
+                initData();
+                coinAdapt.setData(data);
+                someCoin.setAdapter(coinAdapt);
+            }
+        });
+
+        //提示
     }
 
     public void initData(){
-        data = new ArrayList<>();
+        if(data == null){
+            data = new ArrayList<>();
+        }
+        else{
+            data.clear();
+        }
         int random = 0;
-        for(int i = 0; i < row; i++){
-            for(int j = 0; j < row; j++){
-                random =(int)(Math.random() * 2);
-                if(random % 2 == 0){
-                    data.add('H');
-                }
-                else {
-                    data.add('T');
+        int offset = (gameMode == GameMode.STRIGHT) ? 3 : 1;
+        while(true){
+            for(int i = 0; i < row; i++){
+                for(int j = 0; j < row; j++){
+                    random =(int)(Math.random() * 2);
+                    if(random % 2 == 0){
+                        data.add('H');
+                    }
+                    else {
+                        data.add('T');
+                    }
                 }
             }
+            //在未初始化硬币模型时，硬币模型为空，第一次产生的3*3的一定是有解的，所以直接跳出循环
+            if(coinsModel[row - offset] == null){
+                break;
+            }
+            //判断产生的随机序列是否有解，同时将正确的解存入path中
+            path = (ArrayList<Integer>) coinsModel[row - offset].getShotestPath(coinsModel[row - offset].getIndex(data));
+            if(path.size() > 1){
+                break;
+            }
+            data.clear();
         }
     }
 
@@ -174,8 +205,13 @@ public class CoinActivity extends BaseActivity {
      * @param gameMode
      */
     public void modifyGame(int position, GameMode gameMode){
-        if(!game_mode.equals(gameMode)){
-            coinsModel[position].setGame_mode(gameMode);
+        //判断当前游戏模式是否被更改，如果是被更改，那么更改（说了当没说，，，）
+        this.gameMode = gameMode;
+        if(this.gameMode.equals(GameMode.STRIGHT)){
+            coinAdapt.setCoinsModel(coinsModel[position]);
+        }
+        else {
+            coinAdapt.setCoinsModel(coinsModel[position + 2]);
         }
 
         if((position + 3) != row ){
@@ -184,18 +220,19 @@ public class CoinActivity extends BaseActivity {
             layoutManager.setSpanCount(row);
             coinAdapt.setData(data);
             coinAdapt.setSide((width - 200)/row);
-            coinAdapt.setCoinsModel(coinsModel[position]);
-            coinAdapt.setRow(row);
 
+            coinAdapt.setRow(row);
             someCoin.setAdapter(coinAdapt);
         }
     }
 
     public void getAnswer(){
-        //startAnim();
-        path = (ArrayList<Integer>) coinsModel[row - 3].getShotestPath(coinsModel[row - 3].getIndex(data));
+        int offset = (gameMode == GameMode.STRIGHT) ? 3 : 1;
+        if(path == null){
+            path = (ArrayList<Integer>) coinsModel[row - offset].getShotestPath(coinsModel[row - offset].getIndex(data));
+        }
         for(int i = 0; i < path.size(); i++){
-            data = coinsModel[row - 3].getNode(path.get(i));
+            data = coinsModel[row - offset].getNode(path.get(i));
             coinAdapt.setData(data);
             someCoin.setAdapter(coinAdapt);
         }

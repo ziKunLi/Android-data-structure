@@ -1,5 +1,7 @@
 package com.example.newbies.myapplication.util;
 
+import android.util.Log;
+
 import com.example.newbies.myapplication.util.Graph;
 
 import java.util.ArrayList;
@@ -171,24 +173,15 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 	 * 程序完善第一题
 	 * 内部类Edge
 	 * @author NewBies
-	 *
 	 */
 	public static class Edge{
 		public int u;//起始顶点
 		public int v;//结束顶点
-		public int w;//从开始顶点到结束顶点的路径权重
 
 		/**创建默认起始顶点和终止顶点的构造器**/
 		public Edge(int u, int v){
 			this.u = u;
 			this.v = v;
-		}
-
-		/**创建默认起始顶点,终止顶点和路径权重的构造器**/
-		public Edge(int u, int v, int w){
-			this.u = u;
-			this.v = v;
-			this.w = w;
 		}
 	}
 
@@ -247,7 +240,7 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 		queue.offer(v);
 		//标记已被访问
 		isVisited[v] = true;
-
+		int count = 0;
 		while(!queue.isEmpty()){
 			//删除队列的第一个元素
 			int u = queue.poll();
@@ -261,10 +254,11 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 					queue.offer(w);
 					parent[w] = u;
 					isVisited[w] = true;
+					count++;
 				}
 			}
 		}
-
+		Log.d("count",count + "");
 		return new Tree(v, parent, searchOrders);
 	}
 
@@ -333,7 +327,6 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 					System.out.print("(" + vertices.get(parent[i]) + ", " + vertices.get(i) + ") ");
 				}
 			}
-
 			System.out.println();
 		}
 	}

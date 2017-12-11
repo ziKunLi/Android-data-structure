@@ -472,7 +472,6 @@ public class HuffmanActivity extends BaseActivity{
                 x = x/2;
             }
             x = offsetX - x;
-//            Math.atan()
             show.addView(new CircleView(HuffmanActivity.this, x, offsetY + 150, 47,root.left.weight + "", this.paint));
             show.addView(new LineView(HuffmanActivity.this,offsetX - 33.3f, offsetY + 33.3f, x + 33.3f, offsetY + 116.7f,"", this.paint));
             showHuffman(root.left, x, offsetY + 150, ++current);

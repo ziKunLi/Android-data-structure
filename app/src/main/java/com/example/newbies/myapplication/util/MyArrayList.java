@@ -1,11 +1,12 @@
 package com.example.newbies.myapplication.util;
 
 /**
- * Created by NewBies on 2017/12/7.
+ *
+ * @author NewBies
+ * @date 2017/12/7
  */
-
 public class MyArrayList<E> extends MyAbstractList<E> {
-    private static final int INITIAL_CAPACITY = 16;
+    private static final int INITIAL_CAPACITY = 8;
     private E[] data  = (E[])new Object[INITIAL_CAPACITY];
 
     /**创建一个默认的线性表**/
@@ -54,8 +55,9 @@ public class MyArrayList<E> extends MyAbstractList<E> {
     @Override
     public boolean contains(E e) {
         for(int i = 0; i < size; i++){
-            if(e.equals(data[i]))
+            if(e.equals(data[i])) {
                 return true;
+            }
         }
         return false;
     }
@@ -69,9 +71,11 @@ public class MyArrayList<E> extends MyAbstractList<E> {
     /**返回匹配到第一个元素的角标，如果不存在则返回-1**/
     @Override
     public int indexOf(E e) {
-        for(int i = 0; i < size; i++)
-            if(e.equals(data[i]))
+        for(int i = 0; i < size; i++) {
+            if (e.equals(data[i])) {
                 return i;
+            }
+        }
         return -1;
     }
 
@@ -79,9 +83,11 @@ public class MyArrayList<E> extends MyAbstractList<E> {
     /**返回最后一个匹配到该元素的角标，如果没有匹配到的，则返回-1**/
     @Override
     public int lastIndexOf(E e) {
-        for(int i = size; i > 0; i--)
-            if(e.equals(data[i]))
+        for(int i = size; i > 0; i--) {
+            if (e.equals(data[i])) {
                 return i;
+            }
+        }
         return -1;
     }
 
@@ -91,8 +97,9 @@ public class MyArrayList<E> extends MyAbstractList<E> {
         E e = data[index];
 
         //左移
-        for(int j = index; j < size - 1; j++)
+        for(int j = index; j < size - 1; j++) {
             data[j] = data[j + 1];
+        }
         //现在，这个位置的元素为null
         data[size - 1] = null;
 
@@ -116,8 +123,9 @@ public class MyArrayList<E> extends MyAbstractList<E> {
 
         for(int i = 0; i < size; i++){
             result.append(data[i]);
-            if(i < size - 1)
+            if(i < size - 1) {
                 result.append(", ");
+            }
         }
 
         return result.toString() + "]";
@@ -131,5 +139,9 @@ public class MyArrayList<E> extends MyAbstractList<E> {
             System.arraycopy(data, 0, newData, 0, size);
             data = newData;
         }
+    }
+
+    public int getTrueSize(){
+        return data.length;
     }
 }

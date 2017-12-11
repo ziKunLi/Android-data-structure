@@ -11,24 +11,29 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_recycle_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
+            android:layout_marginTop="100dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp"/>
+        <!--线性表-->
         <LinearLayout
-            android:id="@+id/list_and_tree"
+            android:id="@+id/list_bar"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:orientation="vertical"
             android:layout_gravity="bottom"
             android:paddingLeft="50dp"
             android:paddingRight="50dp"
-            android:visibility="invisible">
+            android:visibility="gone">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
                 <TextView
+                    android:id="@+id/input_value"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="4"
@@ -40,6 +45,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"/>
                 <TextView
+                    android:id="@+id/input_index"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -80,7 +86,85 @@
                     android:layout_weight="1"
                     android:text="压缩"/>
             </LinearLayout>
+
         </LinearLayout>
+
+        <!--栈和队列-->
+        <LinearLayout
+            android:id="@+id/stack_and_queue_bar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="请输入一个值" />
+            <EditText
+                android:id="@+id/stack_and_queue_value"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+            <Button
+                android:id="@+id/push_or_enqueue"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="进栈"/>
+            <Button
+                android:id="@+id/pop_or_dequeue"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="出栈"/>
+        </LinearLayout>
+
+        <!--二叉查找树-->
+        <LinearLayout
+            android:id="@+id/bst_bar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="请输入一个值" />
+            <EditText
+                android:id="@+id/bst_value"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+            <Button
+                android:id="@+id/bst_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="查找"/>
+            <Button
+                android:id="@+id/bst_add"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="插入"/>
+            <Button
+                android:id="@+id/bst_delete"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="删除"/>
+        </LinearLayout>
+        <!--图-->
         <LinearLayout
             android:id="@+id/graph"
             android:layout_width="match_parent"

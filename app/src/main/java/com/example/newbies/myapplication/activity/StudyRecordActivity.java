@@ -80,6 +80,9 @@ public class StudyRecordActivity extends  BaseActivity {
         data.add("迷宫问题");
     }
 
+    /**
+     * 重写返回按钮事件，单击返回按钮回到桌面
+     */
     @Override
     public void onBackPressed(){
         Intent home = new Intent(Intent.ACTION_MAIN);

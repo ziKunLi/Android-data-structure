@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="60dp"
+    android:layout_width="100dp"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/linked_list_item"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="25sp"
+            android:background="@drawable/array_list_bg"/>
+        <TextView
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/array_list_bg"/>
+        <TextView
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text= "ㅡ▷"/>
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/index"
+        android:layout_width="65dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:background="@color/font2"
+        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:text="1"/>
 </LinearLayout>

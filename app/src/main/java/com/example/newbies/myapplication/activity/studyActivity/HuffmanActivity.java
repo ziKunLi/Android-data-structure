@@ -2,19 +2,24 @@ package com.example.newbies.myapplication.activity.studyActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -34,10 +39,13 @@ import com.example.newbies.myapplication.view.CircleView;
 import com.example.newbies.myapplication.view.LineView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -69,9 +77,17 @@ public class HuffmanActivity extends BaseActivity{
      */
     private FloatingActionButton showHuffmanCode;
     /**
+     * 用于打开展示所有编码的按钮
+     */
+    private FloatingActionButton showAllCode;
+    /**
      * 文件路径
      */
     private String commonFilePath;
+    /**
+     * SD卡的工作目录
+     */
+    private String sdCardPath;
     /**
      * 用于展示哈夫曼树的布局
      */
@@ -105,6 +121,18 @@ public class HuffmanActivity extends BaseActivity{
      */
     private EditText matchText;
     /**
+     * 用于展示所有字符编码后的二进制字符
+     */
+    private TextView allCodeText;
+    /**
+     * 输入框或者读取文件中的字符
+     */
+    private String soureText = "";
+    /**
+     * 用于存储所有的编码后的二进制编码
+     */
+    private String allCodeString;
+    /**
      * 手机屏幕的宽
      */
     private int width;
@@ -120,6 +148,10 @@ public class HuffmanActivity extends BaseActivity{
      * 用于显示哈夫曼编码的popupWindow
      */
     private PopupWindow codePopupWindow = null;
+    /**
+     * 用于展示所有字符编码的弹窗
+     */
+    private PopupWindow allCodePopupWindow = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -130,6 +162,7 @@ public class HuffmanActivity extends BaseActivity{
         ButterKnife.bind(this);
         initView();
         initListener();
+
     }
 
     @Override
@@ -140,11 +173,16 @@ public class HuffmanActivity extends BaseActivity{
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
     }
+
+    /**
+     * 初始化视图
+     */
     @Override
     public void initView() {
         buildByFile = (FloatingActionButton)findViewById(R.id.buildByFile);
         buildByText = (FloatingActionButton)findViewById(R.id.buildByText);
         showHuffmanCode = (FloatingActionButton)findViewById(R.id.showHuffmanCode);
+        showAllCode = (FloatingActionButton)findViewById(R.id.showALLCode);
         show = (FrameLayout)findViewById(R.id.show);
 
         //创建一个画笔
@@ -167,6 +205,9 @@ public class HuffmanActivity extends BaseActivity{
 
     }
 
+    /**
+     * 初始化相关的监听事件
+     */
     @Override
     public void initListener() {
         buildByFile.setOnClickListener(new View.OnClickListener() {
@@ -189,6 +230,16 @@ public class HuffmanActivity extends BaseActivity{
                 showHuffmanCode();
             }
         });
+
+        showAllCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                allCodeString = enCode(soureText);
+                showAllCode();
+                //将进行压缩后的字符串转换为二进制，存入文件，达到压缩文件的效果
+                saveCompressedFile("A_test","codeFile.dat",allCodeString);
+            }
+        });
     }
 
     /**
@@ -208,8 +259,8 @@ public class HuffmanActivity extends BaseActivity{
      * @param path
      */
     public void readFile(String path){
-        File file = new File("" + path);
 
+        File file = new File(path);
         //非线程安全，但效率高，PS：这里我没用到线程
         StringBuilder content = new StringBuilder();
         try{
@@ -228,8 +279,13 @@ public class HuffmanActivity extends BaseActivity{
                     }
                     content.append(line);
                 }
+                onResumeHuffmanTree(content.toString());
+                isr.close();
+                br.close();
+                is.close();
             }
         }catch (FileNotFoundException e){
+            e.printStackTrace();
             Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();
         }catch (IOException e){
             Toast.makeText(this, "读取错误", Toast.LENGTH_SHORT).show();
@@ -237,15 +293,65 @@ public class HuffmanActivity extends BaseActivity{
     }
 
     /**
-     * 从输入框中获得字符并计算其权重
+     * 利用产生的哈夫曼树压缩文件
+     * @param path
+     * @param fileName
+     */
+    public void saveCompressedFile(String path, String fileName, String text){
+        //判断手机是否存在SD卡
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+            //获取SD卡的当前的工作
+            sdCardPath  = Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+        File tempFile = new File(sdCardPath + "/" +path + "/" + fileName);
+        try {
+            //创建二进制文件流
+            DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tempFile)));
+            //根据传进来的
+            int[] allCode = analysisByte(text);
+            for(int i = 0; i < allCode.length; i++){
+                //以二进制的方式将编码存入文件
+                dataOutputStream.write(allCode[i]);
+            }
+            dataOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 将每八个字符（二进制编码）装换为十进制
+     * @param text
      * @return
      */
-    public int[] getCharTimeByEditText(){
-        //获取到输入框中的字符
-        String text = String.valueOf(someText.getText());
-        if(text.equals("")){
-            return null;
+    public int[] analysisByte(String text){
+        //确定该编码一共能转换多少个编码
+        int size = text.length()/8;
+        int[] allCode = new int[size + 1];
+        String tempString = "";
+        for(int i = 0 ; i < size; i++){
+            tempString = text.substring(i * 8, (i + 1) * 8);
+            //进制转换
+            for(int j = 0; j < tempString.length(); j++){
+                allCode[i] += (Integer.parseInt(tempString.charAt(tempString.length() - j - 1) + "")) * (int) Math.pow(2, j);
+            }
         }
+        //将几个不能被八整除的编码单独进行二进制到十进制的转换
+        tempString = text.substring(size * 8, text.length());
+        for(int j = 0; j < tempString.length(); j++){
+            allCode[size] += (Integer.parseInt(tempString.charAt(tempString.length() - j - 1) + "")) * (int) Math.pow(2, j);
+        }
+        return allCode;
+    }
+
+    /**
+     * 筛选字符，去除不安全的字符
+     * @param text
+     * @return
+     */
+    public String screenString(String text){
         StringBuilder stringBuilder = new StringBuilder();
         char temp = ' ';
         for(int i = 0; i < text.length(); i++){
@@ -255,15 +361,23 @@ public class HuffmanActivity extends BaseActivity{
             }
         }
         String current = stringBuilder.toString().toLowerCase();
-        for(int i = 0; i < current.length(); i++){
-            charTimes[current.charAt(i) - 97]++;
+        return current;
+    }
+    /**
+     * 从输入框中获得字符并计算其权重，没有进行字符的筛选，如需要筛选，请调用screenString
+     * @return
+     */
+    public int[] getCharTimeByEditText(String text){
+
+        for(int i = 0; i < text.length(); i++){
+            charTimes[text.charAt(i) - 97]++;
         }
         return  charTimes;
     }
 
     /**
      * @auther 李自坤
-     * 弹出自定义的popWindow
+     * 弹出自定义的popWindow，显示输入字符以便生成哈夫曼树的弹窗
      */
     public void inputText() {
 
@@ -282,25 +396,15 @@ public class HuffmanActivity extends BaseActivity{
             popView.findViewById(R.id.sure).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //初始化哈夫曼编码
-                    for(int i = 0 ; i < 26; i++){
-                        leafCode[i] = null;
-                        charTimes[i] = 0;
-                    }
-                    HuffmanTree tree = getHuffmanTree(getCharTimeByEditText());
+                    //获取到输入框中的字符
+                    String text = String.valueOf(someText.getText());
+                    allCodeString = text;
                     //如果输入的字符串是错误的，那么该哈夫曼树就为空
-                    if(tree == null){
+                    if(text.equals("")){
                         return;
                     }
-                    HuffmanTree.Node root = tree.root;
-
-                    getAllCode(root);
-                    Log.d("tag", show.getChildCount() + "");
-                    if(show.getChildCount() > 1){
-                        show.removeViews(1,show.getChildCount() - 1);
-                    }
-                    show.addView(new CircleView(HuffmanActivity.this, width/2, 150f, 47f,root.weight + "",paint));
-                    showHuffman(root, width/2,150f, 1);
+                    onResumeHuffmanTree(text);
+                    //关闭输入提示框
                     inputPopupWindow.dismiss();
                 }
             });
@@ -323,6 +427,40 @@ public class HuffmanActivity extends BaseActivity{
         backgroundAlpha(0.3f);
     }
 
+    /**
+     * 每次进行绘制哈夫曼树之前做的准备，就是进行一些初始化的准备
+     * @param text
+     */
+    public void onResumeHuffmanTree(String text){
+        allCodeString = "";
+        //每次点击初始化哈夫曼编码，避免之前输入的字符造成的影响
+        for(int i = 0 ; i < 26; i++){
+            leafCode[i] = null;
+            charTimes[i] = 0;
+        }
+        //对传入进来的字符串进行筛选，防止危险字符使整个程序崩溃
+        text = screenString(text);
+        if(text == null || text.equals("")){
+            Toast.makeText(this,"该文件暂不支持！",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        soureText = text;
+        //得打哈夫曼树
+        HuffmanTree tree = getHuffmanTree(getCharTimeByEditText(text));
+        //得到哈夫曼树的根节点
+        HuffmanTree.Node root = tree.root;
+        getAllCode(root);
+        if(show.getChildCount() > 1){
+            show.removeViews(1,show.getChildCount() - 1);
+        }
+        //绘制出根节点和相关线条
+        show.addView(new CircleView(HuffmanActivity.this, width/2, 150f, 47f,root.weight + "",paint));
+        showHuffman(root, width/2,150f, 1);
+    }
+
+    /**
+     * 展示所有字符和相应编码的键值对
+     */
     public void showHuffmanCode(){
         if (codePopupWindow == null) {
             //初始化PopupWindow的布局
@@ -372,6 +510,37 @@ public class HuffmanActivity extends BaseActivity{
         backgroundAlpha(0.33f);
     }
 
+    public void showAllCode(){
+        if(allCodePopupWindow == null){
+            //初始化popupWindow的布局文件
+            View popupView = getLayoutInflater().inflate(R.layout.show_all_code,null);
+            //设置popupWindow的大小，同时将focusable设置为true
+            allCodePopupWindow = new PopupWindow(popupView, width * 3/4,height,true);
+            //必须设置BackgroundDrawable后，设置OutsideTouchable才会有效果
+            allCodePopupWindow.setBackgroundDrawable(new ColorDrawable());
+            //设置点击外面关闭
+            allCodePopupWindow.setOutsideTouchable(true);
+            //设置popupWindow显示的位置，这里我将其设置显示在屏幕中心
+            allCodePopupWindow.showAtLocation(show, Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0, 0);
+            allCodePopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    backgroundAlpha(1.0f);
+                }
+            });
+            //设置背景为半透明
+            backgroundAlpha(0.35f);
+            allCodeText = popupView.findViewById(R.id.allCodeText);
+            allCodeText.setText("原文：" + soureText + "\n\n编码后：" + allCodeString);
+        }else{
+            allCodeText.setText("原文：" + soureText + "\n\n编码后：" + allCodeString);
+            //设置背景为半透明
+            backgroundAlpha(0.35f);
+            //设置popupWindow显示的位置，这里我将其设置显示在屏幕中心
+            allCodePopupWindow.showAtLocation(show, Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0, 0);
+        }
+    }
+
     /**
      * 初始化表格的数据
      */
@@ -389,26 +558,11 @@ public class HuffmanActivity extends BaseActivity{
      * @param bgAlpha
      * @auther 李自坤
      */
-    public void backgroundAlpha(float bgAlpha)
-    {
+    public void backgroundAlpha(float bgAlpha) {
         WindowManager.LayoutParams lp = getWindow().getAttributes();
         //0.0-1.0
         lp.alpha = bgAlpha;
         getWindow().setAttributes(lp);
-    }
-
-    /**
-     * 将哈夫曼树存入文件
-     */
-    public void inputFile(){
-
-    }
-
-    /**
-     * 计算字符频率
-     */
-    public void computeCharTimes(){
-        
     }
 
     /**
@@ -467,23 +621,30 @@ public class HuffmanActivity extends BaseActivity{
      */
     public void showHuffman(HuffmanTree.Node root, float offsetX, float offsetY, int current){
         if(root.left != null){
+            //计算X轴方向的偏移量
             float x = width/2;
             for(int i = 0; i < current; i++){
                 x = x/2;
             }
             x = offsetX - x;
+            //绘制圆
             show.addView(new CircleView(HuffmanActivity.this, x, offsetY + 150, 47,root.left.weight + "", this.paint));
+            //绘制连接线
             show.addView(new LineView(HuffmanActivity.this,offsetX - 33.3f, offsetY + 33.3f, x + 33.3f, offsetY + 116.7f,"", this.paint));
+            //递归调用，绘制下一个结点，同时其Y轴偏移量加150，也就是下一个结点向下移动
             showHuffman(root.left, x, offsetY + 150, ++current);
         }
         current--;
         if(root.right != null){
             float x = width/2;
+            //计算
             for(int i = 0; i < current; i++){
                 x = x/2;
             }
             x = offsetX + x;
+            //绘制圆
             show.addView(new CircleView(HuffmanActivity.this, x, offsetY + 150, 47,root.right.weight + "", this.paint));
+            //绘制连接线
             show.addView(new LineView(HuffmanActivity.this,offsetX + 33.3f, offsetY + 33.3f, x - 33.3f, offsetY + 116.7f,"", this.paint));
             showHuffman(root.right, x, offsetY + 150, ++current);
         }
@@ -491,19 +652,11 @@ public class HuffmanActivity extends BaseActivity{
     }
 
     /**
-     * 得到一个字符串的哈夫曼编码
-     * @return
-     */
-    public String getHuffmanCodeByString(String string){
-        return null;
-    }
-
-    /**
      * 根据哈夫曼编码得到字符
      * @param charTimes
      * @return
      */
-    public static ArrayList<String> deCode(String[] leafCode, int[] charTimes, String text) {
+    public ArrayList<String> deCode(String[] leafCode, int[] charTimes, String text) {
         int count = 0;
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < text.length(); i++) {
@@ -519,15 +672,49 @@ public class HuffmanActivity extends BaseActivity{
         return list;
     }
 
+    /**
+     * 将字符串解析成哈夫曼编码
+     * @param text
+     * @return
+     */
+    public String enCode(String text){
+        if(text == null||text.equals("")){
+            return "";
+        }
+        text = text.trim();
+        StringBuilder allCode = new StringBuilder();
+        for(int i = 0; i < text.length(); i++){
+            allCode.append(leafCode[text.charAt(i) - 97]);
+        }
+        return allCode.toString();
+    }
+
     @Override
-    protected  void onActivityResult(int requestCode,int resultCode, Intent data){
-        if(resultCode == Activity.RESULT_OK){
+    protected  void onActivityResult(int requestCode,int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+
             Uri uri = data.getData();
+            String scheme = uri.getScheme();
             //从系统文件管理器中查找文件
-            if(requestCode == 1){
-                commonFilePath = uri.getPath().toString();
+            if (requestCode == 1) {
+                //得到文件的真实路径
+                if (scheme == null) {
+                    commonFilePath = uri.getPath();
+                } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
+                    Cursor cursor = this.getContentResolver().query(uri, new String[]{MediaStore.Images.ImageColumns.DATA}, null, null, null);
+
+                    if (null != cursor) {
+                        if (cursor.moveToFirst()) {
+                            int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                            if (index > -1) {
+                                commonFilePath = cursor.getString(index);
+                            }
+                        }
+                        cursor.close();
+                    }
+                }
+                //读取文件
                 readFile(commonFilePath);
-                //fileName.setText(commonFilePath);
             }
         }
     }

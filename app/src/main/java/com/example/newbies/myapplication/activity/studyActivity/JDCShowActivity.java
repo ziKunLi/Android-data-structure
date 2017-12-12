@@ -18,8 +18,11 @@ import android.widget.TextView;
 
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.activity.BaseActivity;
+import com.example.newbies.myapplication.adapter.ArrayListAdapter;
+import com.example.newbies.myapplication.adapter.LinkedListAdapter;
 import com.example.newbies.myapplication.adapter.ListAdapt;
 import com.example.newbies.myapplication.util.MyArrayList;
+import com.example.newbies.myapplication.util.MyLinkedList;
 import com.example.newbies.myapplication.util.MyList;
 
 import java.util.ArrayList;
@@ -52,15 +55,18 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
     /**
      * 适配器
      */
-    private ListAdapt<String> listAdapt;
+    private ListAdapt arraylistAdapter;
+    private ListAdapt linkedListAdapter;
     /**
      * 用于填充RecyclerAdapt的数据
      */
-    private MyList<String> data;
+    private MyList<String> arrayListData;
+    private MyList<String> linkedListData;
     /**
      * 线性表中数据的当前位置，也可以叫做实际大小
      */
-    private int current;
+    private int arrayListCurrent;
+    private int linkedListCurrent;
     /**
      * 抽屉菜单
      */
@@ -140,7 +146,8 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
     }
 
     public void initData(){
-        data = new MyArrayList<>();
+        arrayListData = new MyArrayList<>();
+        linkedListData = new MyLinkedList<>();
     }
     @Override
     public void initView() {
@@ -165,9 +172,9 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         //设置为水平方向布局
         linearLayoutManager.setOrientation(LinearLayout.HORIZONTAL);
-        listAdapt = new ListAdapt<>(data, R.layout.array_list_item);
+        linkedListAdapter = new LinkedListAdapter(linkedListData, R.layout.linked_list_item);
+        arraylistAdapter = new ArrayListAdapter(arrayListData, R.layout.array_list_item);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(listAdapt);
 
         //底部操作栏
         listBar = (LinearLayout)findViewById(R.id.list_bar);
@@ -206,6 +213,7 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                 //关闭抽屉
                 jdc_select.closeDrawer(GravityCompat.START);
                 listBar.setVisibility(View.VISIBLE);
+                recyclerView.setAdapter(arraylistAdapter);
                 //如果打开了链表底部操作栏，那么这个按钮应该是被隐藏了的，这时再打开线性表时就应该将其显示
                 if(trimToSize.getVisibility() == View.GONE){
                     trimToSize.setVisibility(View.VISIBLE);
@@ -221,6 +229,7 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                 trimToSize.setVisibility(View.GONE);
                 //开启动画
                 showList_Bar.start();
+                recyclerView.setAdapter(linkedListAdapter);
                 break;
             case R.id.stack:
                 //关闭抽屉
@@ -253,11 +262,18 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
             case R.id.insert:
                 try {
                     if(index.getText().toString().equals("")){
-                        listAdapt.add(current,Integer.parseInt(vaule.getText().toString()) + "");
-                        current++;
+                        //判断当前使用的是linkedList还是arrayList
+                        if(trimToSize.getVisibility() == View.GONE){
+                            linkedListAdapter.add(linkedListCurrent,Integer.parseInt(vaule.getText().toString()) + "");
+                            linkedListCurrent++;
+                        }
+                        else {
+                            arraylistAdapter.add(arrayListCurrent,Integer.parseInt(vaule.getText().toString()) + "");
+                            arrayListCurrent++;
+                        }
                     }
                     else {
-                        listAdapt.add(Integer.parseInt(index.getText().toString()), Integer.parseInt(vaule.getText().toString()) + "");
+                        arraylistAdapter.add(Integer.parseInt(index.getText().toString()), Integer.parseInt(vaule.getText().toString()) + "");
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -265,13 +281,21 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                 break;
             case R.id.delete:
                 try {
-                    if(current > 0){
+                    if(arrayListCurrent > 0 && linkedListCurrent > 0){
                         if(index.getText().toString().equals("")){
-                            current--;
-                            listAdapt.remove(current);
+                            //判断当前使用的是linkedList还是arrayList
+                            if(trimToSize.getVisibility() == View.GONE){
+                                linkedListCurrent--;
+                                linkedListAdapter.remove(linkedListCurrent);
+                            }
+                            else {
+                                arrayListCurrent--;
+                                arraylistAdapter.remove(arrayListCurrent);
+                            }
+
                         }
                         else {
-                            listAdapt.remove(Integer.parseInt(index.getText().toString()));
+                            arraylistAdapter.remove(Integer.parseInt(index.getText().toString()));
                         }
                     }
                 }catch (Exception e){
@@ -279,7 +303,7 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                 }
                 break;
             case R.id.trimToSize:
-                listAdapt.trimToSize();
+                ((ArrayListAdapter)arraylistAdapter).trimToSize();
                 break;
             default:break;
         }

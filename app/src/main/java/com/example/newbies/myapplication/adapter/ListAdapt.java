@@ -18,29 +18,16 @@ import java.util.ArrayList;
  * @author NewBies
  * @date 2017/12/8
  */
-public class ListAdapt<E> extends RecyclerView.Adapter<ListAdapt.ViewHolder>{
+public abstract class ListAdapt extends RecyclerView.Adapter{
 
-    private MyList<E> data;
-    private int resourceId;
-    private ArrayList<ViewHolder> viewHolders;
-    private OnItemClickListener onItemClickListener;
+    public MyList<String> data;
+    public int resourceId;
+    public OnItemClickListener onItemClickListener;
 
-    public ListAdapt(MyList<E> data, int resourceId){
+    public ListAdapt(MyList<String> data, int resourceId){
         this.data = data;
         this.resourceId = resourceId;
-        this.viewHolders = new ArrayList<>();
-    }
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
-
-        private TextView textView;
-        private TextView index;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            textView = (TextView)itemView.findViewById(R.id.list_and_tree_item);
-            index = (TextView)itemView.findViewById(R.id.value_index);
-        }
     }
 
     /**
@@ -68,48 +55,26 @@ public class ListAdapt<E> extends RecyclerView.Adapter<ListAdapt.ViewHolder>{
         this.onItemClickListener = onItemClickListener;
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(resourceId, parent,false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        this.viewHolders.add(holder);
-        holder.textView.setText((String) data.get(position));
-        holder.index.setText(position + "");
-    }
-
-    @Override
-    public int getItemCount() {
-        if(data instanceof MyArrayList){
-            return ((MyArrayList) data).getTrueSize();
-        }
-        else{
-            return data.size();
-        }
-    }
 
     /**
      * 在指定位置添加指定数据
      * @param position
      * @param data
      */
-    public void  add(int position, E data){
+    public void  add(int position, String data){
         if(position < this.data.size()){
             this.data.set(position,data);
         }
         else{
             this.data.add(data);
         }
-        this.setItemText(position, (String) data);
         //通知添加了数据
         this.notifyItemInserted(position);
         //通知数据发生了改变
         this.notifyDataSetChanged();
         //通知组件大小发生了改变
         this.notifyItemChanged(position);
+        setItemText(position, (String) data);
     }
 
     /**
@@ -126,18 +91,5 @@ public class ListAdapt<E> extends RecyclerView.Adapter<ListAdapt.ViewHolder>{
         this.notifyItemChanged(position);
     }
 
-    public void setItemText(int position, String text){
-        this.viewHolders.get(position).textView.getResources().getColor(R.color.colorPrimaryDark);
-        this.viewHolders.get(position).textView.setText(text);
-    }
-
-    public void trimToSize(){
-        if(this.data instanceof  MyArrayList){
-            ((MyArrayList)this.data).trimToSize();
-            //通知数据发生了改变
-            this.notifyDataSetChanged();
-            //通知组件大小发生了改变
-            this.notifyItemChanged(data.size());
-        }
-    }
+    public abstract void setItemText(int position, String text);
 }

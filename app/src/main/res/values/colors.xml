@@ -13,6 +13,7 @@
     <color name="font1">#333333</color>
     <color name="font2">#666666</color>
     <color name="font3">#999999</color>
+    <color name="font4">#cccccc</color>
 
     <color name="list_item">#bffef9</color>
 </resources>

@@ -11,34 +11,35 @@
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom">
+        android:layout_gravity="end|bottom"
+        fab:fab_labelStyle="@style/menu_labels_style">
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/buildByFile"
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_size="mini"
-            fab:fab_title="fasdfa"/>
+            fab:fab_title="打开文件"/>
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/buildByText"
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_size="mini"
-            fab:fab_title="fasdfa"/>
+            fab:fab_title="输入字符"/>
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/showHuffmanCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_size="mini"
-            fab:fab_title="fasdfa"/>
+            fab:fab_title="显示编码表"/>
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/showALLCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_size="mini"
-            fab:fab_title="fasdfa"/>
+            fab:fab_title="显示编码"/>
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </FrameLayout>

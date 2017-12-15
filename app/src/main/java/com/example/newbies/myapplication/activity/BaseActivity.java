@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 
 import com.example.newbies.myapplication.R;
+import com.example.newbies.myapplication.view.CustomDialog;
 import com.gigamole.library.navigationtabstrip.NavigationTabStrip;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected ImageButton studyRecord;
     protected ImageButton skillTree;
     protected NavigationTabStrip bottom_button;
+    private CustomDialog customDialog = null;
 
     private List<Activity> activities = new ArrayList<>();
 
@@ -70,6 +72,23 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onDestroy(){
         super.onDestroy();
         activities.remove(this);
+    }
+
+    /**
+     * 显示旋转进度条
+     */
+    public void showProgressDialog(){
+        if(customDialog == null){
+            customDialog = new CustomDialog(this, R.style.CustomDialog);
+        }
+        customDialog.show();
+    }
+
+    /**
+     * 取消显示旋转进度条
+     */
+    public void dismissProgressDialog(){
+        customDialog.dismiss();
     }
 
     /**

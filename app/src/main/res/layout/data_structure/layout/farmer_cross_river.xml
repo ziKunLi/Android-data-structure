@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:gravity="bottom"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/leftBankCabbage"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_cabbage"/>
+            <ImageView
+                android:id="@+id/leftBankSheep"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_sheep"/>
+            <ImageView
+                android:id="@+id/leftBankWolf"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_wolf"/>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/earthColor"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:orientation="vertical"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/startPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_marginBottom="150dp"
+            android:text="开始播放"/>
+        <LinearLayout
+            android:id="@+id/ferry"
+            android:layout_width="72dp"
+            android:layout_height="56dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="72dp"
+                android:layout_height="36dp">
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/ic_farmer"/>
+                <ImageView
+                    android:id="@+id/ferryThing"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp" />
+            </LinearLayout>
+            <TextView
+                android:layout_width="72dp"
+                android:layout_height="20dp"
+                android:background="@color/font3"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@color/riverWater"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:gravity="bottom"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/rightBankCabbage"
+                android:layout_width="36dp"
+                android:layout_height="36dp" />
+            <ImageView
+                android:id="@+id/rightBankSheep"
+                android:layout_width="36dp"
+                android:layout_height="36dp" />
+            <ImageView
+                android:id="@+id/rightBankWolf"
+                android:layout_width="36dp"
+                android:layout_height="36dp" />
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/earthColor"/>
+    </LinearLayout>
+</LinearLayout>

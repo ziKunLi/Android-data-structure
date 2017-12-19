@@ -148,6 +148,7 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
     public void initData(){
         arrayListData = new MyArrayList<>();
         linkedListData = new MyLinkedList<>();
+        linkedListData.add("");
     }
     @Override
     public void initView() {

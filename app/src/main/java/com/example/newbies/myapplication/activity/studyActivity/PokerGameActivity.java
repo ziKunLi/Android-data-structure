@@ -292,7 +292,6 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
         int resID = getResources().getIdentifier(name, "drawable", appInfo.packageName);
 
         return BitmapFactory.decodeResource(getResources(), resID);
-
     }
 
     /**
@@ -629,13 +628,16 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.findProbability:
                 showProgressDialog();
+                findProbability.setClickable(false);
                 long startTime = System.currentTimeMillis();
                 String result = CalculateRatio.allResult();
                 long endTime = System.currentTimeMillis();
                 result += "耗时：" + (endTime - startTime)/1000.0 + "秒";
                 Snackbar.make(findProbability,result,Snackbar.LENGTH_INDEFINITE).setAction("确定", new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {}
+                    public void onClick(View v) {
+                        findProbability.setClickable(true);
+                    }
                 }).show();
                 dismissProgressDialog();
 

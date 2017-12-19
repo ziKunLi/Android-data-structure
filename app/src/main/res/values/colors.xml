@@ -15,5 +15,8 @@
     <color name="font3">#999999</color>
     <color name="font4">#cccccc</color>
 
+    <color name="earthColor">#ad4e00</color>
+    <color name="riverWater">#40a9ff</color>
+
     <color name="list_item">#bffef9</color>
 </resources>

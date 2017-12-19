@@ -56,4 +56,6 @@ dependencies {
     compile 'com.github.devlight.navigationtabstrip:library:1.0.1'
     //粒子文字动画（打算用于做开屏动画）
     compile 'yasic.library.ParticleTextView:particletextview:0.0.5'
+    //百分比布局
+    compile 'com.android.support:percent:26.0.0-beta1'
 }

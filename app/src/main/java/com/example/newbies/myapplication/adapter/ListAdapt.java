@@ -74,6 +74,7 @@ public abstract class ListAdapt extends RecyclerView.Adapter{
         this.notifyDataSetChanged();
         //通知组件大小发生了改变
         this.notifyItemChanged(position);
+        //这里，我发现了一个问题，就是在通知相关改变时，还没来得及通知，下面这条语句就，执行了，然后就可能报错，很尴尬呀
         setItemText(position, (String) data);
     }
 

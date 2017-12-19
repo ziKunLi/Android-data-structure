@@ -46,6 +46,9 @@
         <activity
             android:name=".activity.studyActivity.JDCShowActivity"
             android:launchMode="singleTask"/>
+        <activity
+            android:name=".activity.studyActivity.FarmerCrossRiverActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>

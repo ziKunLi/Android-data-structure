@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 /**
- *
+ * 用于哈夫曼编码与字符匹配显示的适配器
  * @author NewBies
  * @date 2017/12/4
  */

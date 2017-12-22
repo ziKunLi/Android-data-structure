@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.support.v7.widget.AppCompatSpinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.activity.BaseActivity;
@@ -68,13 +69,6 @@ public class CoinActivity extends BaseActivity {
     private GameMode gameMode = GameMode.STRIGHT;
     private int row = 3;
     private ArrayList<Integer> path;
-//    /**
-//     * 动画
-//     */
-//    private ObjectAnimator[] animatorsX;
-//    private ObjectAnimator[] animatorsY;
-//    private ObjectAnimator animator;
-//    private ArrayList<TextView> textViews;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -87,9 +81,12 @@ public class CoinActivity extends BaseActivity {
     }
     @Override
     public void initView() {
-        WindowManager windowManager = (WindowManager)CoinActivity.this.getSystemService(Context.WINDOW_SERVICE);
+        //获取屏幕的宽高
+        WindowManager windowManager = (WindowManager)this.getSystemService(Context.WINDOW_SERVICE);
         width = windowManager.getDefaultDisplay().getWidth();
         height = windowManager.getDefaultDisplay().getHeight();
+        scale = getResources().getDisplayMetrics().density;
+
         description = (TextView)findViewById(R.id.description);
         coin_count = (AppCompatSpinner)findViewById(R.id.coin_count);
         game_mode = (AppCompatSpinner)findViewById(R.id.game_mode);
@@ -237,25 +234,4 @@ public class CoinActivity extends BaseActivity {
             someCoin.setAdapter(coinAdapt);
         }
     }
-//    /**
-//     * 开启动画
-//     */
-//    public void startAnim(){
-//        textViews = coinAdapt.getTextViews();
-//        animator = ObjectAnimator.ofFloat(textViews.get(0), "rotation",0f,360f);
-//        animator.setDuration(500);
-//        animatorsX = new ObjectAnimator[data.size() - 1];
-//        animatorsY = new ObjectAnimator[data.size() - 1];
-//        for(int i= 0; i < animatorsX.length; i++){
-//            animatorsX[i] = ObjectAnimator.ofFloat(textViews.get(i),"translationY",textViews.get(0).getX() - textViews.get(i + 1).getX() - 100);
-//            animatorsY[i] = ObjectAnimator.ofFloat(textViews.get(i),"translationX",textViews.get(0).getX() - textViews.get(i + 1).getX() - 100);
-//            animatorsX[i].setDuration(500);
-//            animatorsY[i].setDuration(500);
-//        }
-//        animator.start();
-//        for(int i = 0; i < data.size() - 1; i++){
-//            animatorsX[i].start();
-//            animatorsY[i].start();
-//        }
-//    }
 }

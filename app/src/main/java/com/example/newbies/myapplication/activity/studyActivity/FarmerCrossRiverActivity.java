@@ -55,10 +55,6 @@ public class FarmerCrossRiverActivity extends BaseActivity implements View.OnCli
     private int height;
     private int width;
     /**
-     * 用于进行PX与dp的转换
-     */
-    private float scale;
-    /**
      * 存储路径的线性表
      */
     private ArrayList<ArrayList<Integer>> path;
@@ -125,9 +121,6 @@ public class FarmerCrossRiverActivity extends BaseActivity implements View.OnCli
         rightBankWoft = (ImageView) findViewById(R.id.rightBankWolf);
         ferry = (LinearLayout) findViewById(R.id.ferry);
         ferryThing = (ImageView) findViewById(R.id.ferryThing);
-
-        scale = getResources().getDisplayMetrics().density;
-        //ferryThing.setBackgroundResource(R.drawable.ic_cabbage);
     }
 
     @Override
@@ -278,6 +271,5 @@ public class FarmerCrossRiverActivity extends BaseActivity implements View.OnCli
         rightToLeft = ObjectAnimator.ofFloat(ferry, "x", width / 2 - 72 * scale + 0.5f, 0);
         leftToRight.setDuration(2000);
         rightToLeft.setDuration(2000);
-        animatorSet = new AnimatorSet();
     }
 }

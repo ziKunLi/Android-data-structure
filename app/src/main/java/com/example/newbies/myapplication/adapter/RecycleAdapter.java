@@ -14,6 +14,7 @@ import com.example.newbies.myapplication.activity.studyActivity.CoinActivity;
 import com.example.newbies.myapplication.activity.studyActivity.FarmerCrossRiverActivity;
 import com.example.newbies.myapplication.activity.studyActivity.HuffmanActivity;
 import com.example.newbies.myapplication.activity.studyActivity.JDCShowActivity;
+import com.example.newbies.myapplication.activity.studyActivity.MazeActivity;
 import com.example.newbies.myapplication.activity.studyActivity.PokerGameActivity;
 
 import java.util.ArrayList;
@@ -77,6 +78,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHold
                     case 2:intent.setClass(context, CoinActivity.class);break;
                     case 3:intent.setClass(context, JDCShowActivity.class);break;
                     case 4:intent.setClass(context, FarmerCrossRiverActivity.class);break;
+                    case 5:intent.setClass(context, MazeActivity.class);break;
                     default:break;
                 }
                 context.startActivity(intent);

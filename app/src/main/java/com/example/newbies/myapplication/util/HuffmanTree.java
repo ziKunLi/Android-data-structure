@@ -34,6 +34,7 @@ public class HuffmanTree implements Comparable<HuffmanTree>{
     /**
      * 比较两棵树的权重
      */
+    @Override
     public int compareTo(HuffmanTree o) {
         if (root.weight < o.root.weight){
             return 1;

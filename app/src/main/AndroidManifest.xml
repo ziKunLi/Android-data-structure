@@ -49,6 +49,8 @@
         <activity
             android:name=".activity.studyActivity.FarmerCrossRiverActivity"
             android:launchMode="singleTask"/>
+        <activity android:name=".activity.studyActivity.MazeActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>

@@ -418,13 +418,13 @@ public class HuffmanActivity extends BaseActivity{
             inputPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
-                    backgroundAlpha(1f);
+                    setBackgroundAlpha(1f);
                 }
             });
         } else {
             inputPopupWindow.showAtLocation(show, Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
         }
-        backgroundAlpha(0.3f);
+        setBackgroundAlpha(0.3f);
     }
 
     /**
@@ -495,7 +495,7 @@ public class HuffmanActivity extends BaseActivity{
             codePopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
-                    backgroundAlpha(1f);
+                    setBackgroundAlpha(1f);
                 }
             });
         } else {
@@ -507,7 +507,7 @@ public class HuffmanActivity extends BaseActivity{
         table.setLayoutManager(layoutManager);
         initTable();
         table.setAdapter(new MatchHuffmanAdapter(data));
-        backgroundAlpha(0.33f);
+        setBackgroundAlpha(0.33f);
     }
 
     public void showAllCode(){
@@ -525,17 +525,17 @@ public class HuffmanActivity extends BaseActivity{
             allCodePopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
-                    backgroundAlpha(1.0f);
+                    setBackgroundAlpha(1.0f);
                 }
             });
             //设置背景为半透明
-            backgroundAlpha(0.35f);
+            setBackgroundAlpha(0.35f);
             allCodeText = popupView.findViewById(R.id.allCodeText);
             allCodeText.setText("原文：" + soureText + "\n\n编码后：" + allCodeString);
         }else{
             allCodeText.setText("原文：" + soureText + "\n\n编码后：" + allCodeString);
             //设置背景为半透明
-            backgroundAlpha(0.35f);
+            setBackgroundAlpha(0.35f);
             //设置popupWindow显示的位置，这里我将其设置显示在屏幕中心
             allCodePopupWindow.showAtLocation(show, Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0, 0);
         }
@@ -551,18 +551,6 @@ public class HuffmanActivity extends BaseActivity{
                 data.put((char)(i + 65)+"", leafCode[i]);
             }
         }
-    }
-
-    /**
-     * 设置添加屏幕的背景透明度
-     * @param bgAlpha
-     * @auther 李自坤
-     */
-    public void backgroundAlpha(float bgAlpha) {
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        //0.0-1.0
-        lp.alpha = bgAlpha;
-        getWindow().setAttributes(lp);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.example.newbies.myapplication.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,18 +11,19 @@ import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.util.MyList;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author NewBies
  * @date 2017/12/11
  */
-public class LinkedListAdapter extends ListAdapt {
+public class LinkedListAdapter extends BaseListAdapter<String> {
 
     private ArrayList<ViewHolder> viewHolders;
 
-    public LinkedListAdapter(MyList<String> data, int resourceId) {
-        super(data, resourceId);
+    public LinkedListAdapter(Context context,MyList<String> data, int resourceId) {
+        super(context,data, resourceId);
         this.viewHolders = new ArrayList<>();
     }
 
@@ -44,7 +46,6 @@ public class LinkedListAdapter extends ListAdapt {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        this.viewHolders.add((ViewHolder)holder);
         ((ViewHolder)holder).textView.setText(data.get(position));
         ((ViewHolder)holder).index.setText(position + "");
     }
@@ -55,7 +56,7 @@ public class LinkedListAdapter extends ListAdapt {
     }
 
     @Override
-    public void setItemText(int position, String text) {
-        viewHolders.get(position).textView.setText(text);
+    public void setItemChanged(int position) {
+        viewHolders.get(position).textView.setText("");
     }
 }

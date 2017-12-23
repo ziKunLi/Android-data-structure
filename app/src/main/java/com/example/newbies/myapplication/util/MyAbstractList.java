@@ -1,7 +1,9 @@
 package com.example.newbies.myapplication.util;
 
 /**
- * Created by NewBies on 2017/12/7.
+ *
+ * @author NewBies
+ * @date 2017/12/7
  */
 
 public abstract class MyAbstractList<E> implements MyList<E>{

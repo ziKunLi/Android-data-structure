@@ -1,5 +1,6 @@
 package com.example.newbies.myapplication.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,22 +9,25 @@ import android.widget.TextView;
 
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.util.MyArrayList;
+import com.example.newbies.myapplication.util.MyLinkedList;
 import com.example.newbies.myapplication.util.MyList;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author NewBies
  * @date 2017/12/11
  */
-public class ArrayListAdapter extends ListAdapt {
+public class ArrayListAdapter extends BaseListAdapter<String>{
 
-    private  ArrayList<ViewHolder> viewHolders;
-    public ArrayListAdapter(MyList data, int resourceId) {
-        super(data, resourceId);
-        this.viewHolders = new ArrayList<>();
+    public ArrayListAdapter(Context context, MyList<String> data, int resourceId) {
+        super(context,data,resourceId);
     }
+
+
     static class ViewHolder extends RecyclerView.ViewHolder{
 
         private TextView textView;
@@ -37,37 +41,27 @@ public class ArrayListAdapter extends ListAdapt {
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(resourceId, parent,false);
-        return new ViewHolder(view);
+    public ArrayListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(resourceId, parent,false);
+        return new ArrayListAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        this.viewHolders.add((ViewHolder) holder);
-        ((ViewHolder)holder).textView.setText((String) data.get(position));
-        ((ViewHolder)holder).index.setText(position + "");
+        ((ViewHolder) holder).index.setText(position + "");
+        ((ViewHolder) holder).textView.setText((String) data.get(position));
     }
-
 
     @Override
     public int getItemCount() {
-        return ((MyArrayList) data).getTrueSize();
+        if(data instanceof MyArrayList){
+            return ((MyArrayList<String>)data).getTrueSize();
+        }
+        return data.size();
     }
 
     @Override
-    public void setItemText(int position, String text){
-//        this.viewHolders.get(position).textView.getResources().getColor(R.color.colorPrimaryDark);
-        this.viewHolders.get(position).textView.setText(text);
+    public void setItemChanged(int position) {
     }
 
-    public void trimToSize(){
-        if(this.data instanceof  MyArrayList){
-            ((MyArrayList)this.data).trimToSize();
-            //通知数据发生了改变
-            this.notifyDataSetChanged();
-            //通知组件大小发生了改变
-            this.notifyItemChanged(data.size());
-        }
-    }
 }

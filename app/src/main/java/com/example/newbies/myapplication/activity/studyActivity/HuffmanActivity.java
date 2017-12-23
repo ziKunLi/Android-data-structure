@@ -322,7 +322,7 @@ public class HuffmanActivity extends BaseActivity{
     }
 
     /**
-     * 将每八个字符（二进制编码）装换为十进制
+     * 将每八个字符（二进制编码）转换为十进制
      * @param text
      * @return
      */

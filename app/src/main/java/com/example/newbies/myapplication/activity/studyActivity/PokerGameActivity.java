@@ -527,6 +527,7 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
      * @param bgAlpha
      * @auther 李自坤
      */
+    @Override
     public void setBackgroundAlpha(float bgAlpha) {
         WindowManager.LayoutParams lp = getWindow().getAttributes();
         //0.0-1.0

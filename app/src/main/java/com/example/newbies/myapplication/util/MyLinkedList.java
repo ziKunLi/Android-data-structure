@@ -1,7 +1,9 @@
 package com.example.newbies.myapplication.util;
 
 /**
- * Created by NewBies on 2017/12/7.
+ *
+ * @author NewBies
+ * @date 2017/12/7
  */
 
 public class MyLinkedList<E> extends MyAbstractList<E> {
@@ -62,7 +64,6 @@ public class MyLinkedList<E> extends MyAbstractList<E> {
             tail.next = newNode;
             tail = tail.next;
         }
-
         size++;
     }
 
@@ -90,8 +91,9 @@ public class MyLinkedList<E> extends MyAbstractList<E> {
 
     /**删除第一个结点**/
     public E removeFirst(){
-        if(size == 0) return null;
-        else if(size == 1){
+        if(size == 0) {
+            return null;
+        } else if(size == 1){
             E temp = head.element;
             head = tail = null;
             size = 0;
@@ -100,6 +102,7 @@ public class MyLinkedList<E> extends MyAbstractList<E> {
         else{
             E temp = head.element;
             head = head.next;
+            size--;
             return temp;
         }
     }
@@ -117,12 +120,15 @@ public class MyLinkedList<E> extends MyAbstractList<E> {
         }
         else{
             Node<E> current = head;
+            //查找到倒数第二个结点
             for(int i = 0; i < size - 2; i++){
                 current = current.next;
             }
 
             Node<E> temp = tail;
+            //将会倒数第二个结点设为最后一个结点
             tail = current;
+            //将最后一个结点删掉
             tail.next = null;
             size--;
             return temp.element;
@@ -136,12 +142,19 @@ public class MyLinkedList<E> extends MyAbstractList<E> {
             return null;
         } else if(index >= size) {
             return removeLast();
-        } else{
+        }
+        else if(index == 0){
+            return removeFirst();
+        }
+        else{
             Node<E> current = head;
+            //查找到要删除结点的前一个结点
             for(int i = 0; i < index - 1; i++){
                 current = current.next;
             }
+            //将即将删除的结点暂存为temp
             Node<E> temp = current.next;
+            //删除结点
             current.next = temp.next;
             size--;
             return temp.element;
@@ -203,12 +216,12 @@ public class MyLinkedList<E> extends MyAbstractList<E> {
     public E get(int index) {
         if(size == 0) {
             return null;
-        } else if(index > size){
+        } else if(index >= size){
             return null;
         }
         else{
             Node<E> current = head;
-            for(int i = 0; i < index - 1; i++){
+            for(int i = 0; i < index; i++){
                 current = current.next;
             }
             return current.element;
@@ -258,13 +271,14 @@ public class MyLinkedList<E> extends MyAbstractList<E> {
             return null;
         } else{
             Node<E> current = head;
-            for(int i = 0; i < index - 2; i++){
+            for(int i = 0; i < index; i++){
                 current = current.next;
             }
-            Node<E> temp = new Node<E>(e);
-            current.next = temp;
-            temp.next = (current.next).next;
-            return temp.element;
+//            Node<E> temp = new Node<E>(e);
+//            current.next = temp;
+//            temp.next = (current.next).next;
+            current.element = e;
+            return current.element;
         }
     }
     private static class Node<E> {

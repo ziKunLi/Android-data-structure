@@ -17,4 +17,19 @@
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
+
+    //设置活动切换时的动画
+    <style name="switchActivityAnim" parent="AppTheme">
+        <item name="android:windowAnimationStyle">@style/myWindowAnimationTheme</item>
+    </style>
+    <style name="myWindowAnimationTheme">
+        //A启动B时，B出现在屏幕上，这时执行的是B的动画
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        //A启动B时，A从屏幕上消失，这时启动的是A的动画
+        <item name="android:activityOpenExitAnimation">@null</item>
+        //B返回A时，A出现在屏幕上，这时执行的是A的动画
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        //B返回A时，B从屏幕上消失，这时执行的是B的动画
+        <item name="android:activityCloseExitAnimation">@null</item>
+    </style>
 </resources>

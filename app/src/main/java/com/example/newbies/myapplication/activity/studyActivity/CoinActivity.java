@@ -3,19 +3,26 @@ package com.example.newbies.myapplication.activity.studyActivity;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.support.v7.widget.AppCompatSpinner;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.activity.BaseActivity;
 import com.example.newbies.myapplication.adapter.CoinAdapt;
+import com.example.newbies.myapplication.adapter.CoinAnswerAdapter;
 import com.example.newbies.myapplication.util.CoinsModel;
 import com.example.newbies.myapplication.util.GameMode;
 
@@ -69,6 +76,22 @@ public class CoinActivity extends BaseActivity {
     private GameMode gameMode = GameMode.STRIGHT;
     private int row = 3;
     private ArrayList<Integer> path;
+    /**
+     * 用于展示答案
+     */
+    private PopupWindow coinAnswerPop = null;
+    /**
+     * 用于展示答案每一步骤的ViewPager
+     */
+    private ViewPager step;
+    /**
+     * 用来确定这是第几步的TextView
+     */
+    private TextView stepId;
+    /**
+     * 用于为ViewPager存储view
+     */
+    ArrayList<View> views;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -144,7 +167,7 @@ public class CoinActivity extends BaseActivity {
         answer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getAnswer();
+                showCoinAnswerPop();
             }
         });
 
@@ -152,10 +175,10 @@ public class CoinActivity extends BaseActivity {
         restart.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                int offset = (gameMode == GameMode.STRIGHT) ? 3 : 1;
                 initData();
                 coinAdapt.setData(data);
-                someCoin.setAdapter(coinAdapt);
+                //游戏重新开始，路径重置
+                path = null;
             }
         });
 
@@ -223,15 +246,117 @@ public class CoinActivity extends BaseActivity {
         }
     }
 
-    public void getAnswer(){
+
+    /**
+     * 展示答案的pop
+     */
+    public void showCoinAnswerPop(){
+        if(coinAnswerPop == null){
+            View popView = getLayoutInflater().inflate(R.layout.show_coin_answer_pop,null);
+            coinAnswerPop = new PopupWindow(popView, WindowManager.LayoutParams.MATCH_PARENT, (int)((width - 200)+ dpToPx(60)),true);
+            coinAnswerPop.showAtLocation(answer, Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL,0,0);
+            step = (ViewPager) popView.findViewById(R.id.step);
+            stepId = (TextView)popView.findViewById(R.id.stepId);
+            coinAnswerPop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    setBackgroundAlpha(1.0f);
+                }
+            });
+            showStepPager();
+            setBackgroundAlpha(0.3f);
+        }
+        else{
+            showStepPager();
+            coinAnswerPop.showAtLocation(answer, Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL,0,0);
+            setBackgroundAlpha(0.3f);
+        }
+    }
+
+    /**
+     * 展示每一个步骤的ViewPager
+     */
+    public void showStepPager(){
         int offset = (gameMode == GameMode.STRIGHT) ? 3 : 1;
-        if(path == null){
-            path = (ArrayList<Integer>) coinsModel[row - offset].getShotestPath(coinsModel[row - offset].getIndex(data));
+        //用于为ViewPager存储view
+        views = new ArrayList<>();
+        //获得路径
+        path = (ArrayList<Integer>) coinsModel[row - offset].getShotestPath(coinsModel[row - offset].getIndex(coinAdapt.getData()));
+        //用于存储每一个步骤的数据
+        ArrayList<ArrayList<Character>> data = new ArrayList<>();
+        //用于存储当前步骤与上一步骤不同之处
+        ArrayList<ArrayList<Integer>> diffList = new ArrayList<>();
+        ArrayList<Integer> tempDiff = new ArrayList<>();
+        diffList.add(tempDiff);
+        //一，存储每一个步骤的数据，二，记录当前步骤与上一步骤的不同之处
+        data.add(coinsModel[row - offset].getNode(path.get(0)));
+        for(int i = 1; i < path.size(); i++){
+            data.add(coinsModel[row - offset].getNode(path.get(i)));
+            tempDiff = new ArrayList<>();
+            for(int j = 0; j < row * row; j++){
+                if(!data.get(i).get(j).equals(data.get(i - 1).get(j))){
+                    tempDiff.add(j);
+                }
+            }
+            diffList.add(tempDiff);
         }
+
         for(int i = 0; i < path.size(); i++){
-            data = coinsModel[row - offset].getNode(path.get(i));
-            coinAdapt.setData(data);
-            someCoin.setAdapter(coinAdapt);
+            //被存储的view
+            View view = getLayoutInflater().inflate(R.layout.coin_answer_item,null);
+            RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.answerItem);
+            CoinAnswerAdapter coinAnswerAdapter = new CoinAnswerAdapter(this,data.get(i),(width - 200)/row,diffList.get(i));
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(this,row);
+            recyclerView.setLayoutManager(gridLayoutManager);
+            recyclerView.setAdapter(coinAnswerAdapter);
+            views.add(view);
         }
+
+        /**
+         * 用于切换视图的适配器
+         */
+        PagerAdapter viewPagerAdaper = new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return views.size();
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == views.get((int)object);
+            }
+
+            /**
+             * 该方法做了两件事，一，将要呈现的View加入到container中，第二，将代表该View的唯一值返回
+             * 注意：这个方法很神奇，他不仅要加载当前要显示的界面进入container中，还要自动的将他认为即将
+             *       使用界面加入到container中，这是为了确保在finishUpdate返回this is be done!并且在
+             *       finishUpdate方法执行后，还会自动的加载新的他认为要加载的页面加载到container中
+             * @param container
+             * @param position
+             * @return
+             */
+            @Override
+            public Object instantiateItem(ViewGroup container, int position){
+                container.addView(views.get(position));
+                return position;
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object){
+                container.removeView(views.get(position));
+            }
+
+            /**
+             * 每次启动界面时，就会调用这个方法
+             * @param container
+             */
+            @Override
+            public void startUpdate(ViewGroup container){
+                int position = step.getCurrentItem();
+                stepId.setText("步骤： " + (position + 1) + "");
+            }
+        };
+        //为viewPager设置适配器
+        step.setAdapter(viewPagerAdaper);
     }
 }

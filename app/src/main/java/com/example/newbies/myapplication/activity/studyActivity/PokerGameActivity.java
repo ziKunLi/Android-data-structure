@@ -503,6 +503,11 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
         customizeNum3 = Integer.parseInt(answerPoker3.getText().toString());
         customizeNum4 = Integer.parseInt(answerPoker4.getText().toString());
 
+        random1 = customizeNum1 - 1;
+        random2 = customizeNum2 - 1;
+        random3 = customizeNum3 - 1;
+        random4 = customizeNum4 - 1;
+
         img1.setImageBitmap(images[customizeNum1 - 1]);
         img2.setImageBitmap(images[customizeNum2 + 12]);
         img3.setImageBitmap(images[customizeNum3 + 25]);
@@ -535,6 +540,10 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
         getWindow().setAttributes(lp);
     }
 
+    /**
+     * 判断表达式是否正确
+     * @return
+     */
     public boolean computeResult() {
         int result = 0;
         expression = inputAnswer.getText().toString();
@@ -551,6 +560,7 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     public void onClick(View v) {
+        //获取到表达式
         expression = inputAnswer.getText().toString();
         switch (v.getId()) {
             case R.id.cencle:
@@ -567,17 +577,17 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
                             inputAnswer.setText(expression);
                         }
 
-                        if (temp == random1 + 1) {
+                        //判断退回来的数字，应该添加到哪里
+                        if (temp == random1 + 1&&num1.getText().toString().equals("")) {
                             num1.setText(temp + "");
-                        } else if (temp == random2 + 1) {
+                        } else if (temp == random2 + 1&&num2.getText().toString().equals("")) {
                             num2.setText(temp + "");
-                        } else if (temp == random3 + 1) {
+                        } else if (temp == random3 + 1&&num3.getText().toString().equals("")) {
                             num3.setText(temp + "");
-                        } else if (temp == random4 + 1) {
+                        } else if (temp == random4 + 1&&num4.getText().toString().equals("")) {
                             num4.setText(temp + "");
                         }
                     } catch (Exception e) {
-                        System.out.println();
                         //一切报错尽在掌控之中
                     } finally {
                         inputAnswer.setText(expression.substring(0, expression.length() - 1));

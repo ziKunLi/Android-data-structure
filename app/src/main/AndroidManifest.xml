@@ -24,16 +24,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.MainActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:theme="@style/switchActivityAnim"/>
         <activity
             android:name=".activity.WebViewActivty"
             />
         <activity
             android:name=".activity.StudyRecordActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:theme="@style/switchActivityAnim"/>
         <activity
             android:name=".activity.SkillTreeActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:theme="@style/switchActivityAnim"/>
         <activity
             android:name=".activity.studyActivity.HuffmanActivity"
             android:launchMode="singleTask"/>

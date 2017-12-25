@@ -218,7 +218,10 @@ public class MazeActivity extends BaseActivity implements View.OnClickListener{
                 try {
                     ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
                     mazeModel = (MazeModel) objectInputStream.readObject();
-                    mazeAdapter.setMazeData(mazeModel.getMaze());
+                    mazeData = mazeModel.getMaze();
+                    gridLayoutManager.setSpanCount(mazeData[0].length);
+                    mazeAdapter.setSide(height/(mazeData[0].length));
+                    mazeAdapter.setMazeData(mazeData);
                     objectInputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -321,8 +324,12 @@ public class MazeActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.creatMaze:
                 //新建模型
-                this.mazeModel = new MazeModel(8,8);
-                mazeAdapter.setMazeData(mazeModel.getMaze());
+                int width = 10 + (int)(Math.random() * 4) - (int)(Math.random() * 2);
+                this.mazeModel = new MazeModel(width,width);
+                gridLayoutManager.setSpanCount(width);
+                mazeData = mazeModel.getMaze();
+                mazeAdapter.setSide(height/(mazeData[0].length));
+                mazeAdapter.setMazeData(mazeData);
                 break;
             case R.id.saveMaze:
                 showSaveMazePop();

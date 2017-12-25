@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -39,15 +40,21 @@ import com.example.newbies.myapplication.view.CircleView;
 import com.example.newbies.myapplication.view.LineView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -127,7 +134,7 @@ public class HuffmanActivity extends BaseActivity{
     /**
      * 输入框或者读取文件中的字符
      */
-    private String soureText = "";
+    private String sourceText = "";
     /**
      * 用于存储所有的编码后的二进制编码
      */
@@ -152,6 +159,22 @@ public class HuffmanActivity extends BaseActivity{
      * 用于展示所有字符编码的弹窗
      */
     private PopupWindow allCodePopupWindow = null;
+    /**
+     * 哈夫曼树
+     */
+    private HuffmanTree huffmanTree;
+    /**
+     * 保存编码文件，哈夫曼文件所需的文件名
+     */
+    private String fileName = "";
+    /**
+     * 判断该文件是否已经被保存
+     */
+    private boolean isSaved = false;
+    /**
+     * 判断当前显示的文件是不是压缩文件
+     */
+    private boolean isCompressFile = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -160,6 +183,11 @@ public class HuffmanActivity extends BaseActivity{
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.huffman);
         ButterKnife.bind(this);
+        //判断手机是否存在SD卡
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+            //获取SD卡的当前的工作
+            sdCardPath  = Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
         initView();
         initListener();
 
@@ -234,10 +262,46 @@ public class HuffmanActivity extends BaseActivity{
         showAllCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                allCodeString = enCode(soureText);
-                showAllCode();
-                //将进行压缩后的字符串转换为二进制，存入文件，达到压缩文件的效果
-                saveCompressedFile("A_test","codeFile.dat",allCodeString);
+                //如果不是压缩文件，那么就需要解析编码，压缩文件已经是解析了编码的了
+                if(!isCompressFile){
+                    allCodeString = enCode(sourceText);
+                }
+                //如果编码存在且该文件还没有被保存，且该文件不是压缩文件，那么将其保存
+                if(!allCodeString.equals("")&&!isSaved&&!isCompressFile){
+                    buildByFile.setClickable(false);
+                    buildByText .setClickable(false);
+                    showHuffmanCode.setClickable(false);
+                    showAllCode.setClickable(false);
+                    String codeFileName = "code.dat";
+                    String huffmanFileName = "huffman.dat";
+                    //用于区分保存的是指定文本文件的压缩文件还是输入的字符串的压缩文件
+                    if(!fileName.equals("")){
+                        codeFileName = fileName + "_" + codeFileName;
+                        huffmanFileName = fileName + "_" + huffmanFileName;
+                    }
+
+                    //将进行压缩后的字符串转换为二进制，存入文件，达到压缩文件的效果
+                    saveCompressedFile("A_test",codeFileName,allCodeString);
+                    //保存相应的哈夫曼树
+                    saveCharTimes("A_test",huffmanFileName);
+
+                    Snackbar.make(showAllCode,"压缩文件已保存",Snackbar.LENGTH_INDEFINITE)
+                            .setAction("我知道了", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    showAllCode();
+                                    //文件已经被保存，记录状态变化
+                                    isSaved = true;
+                                    buildByFile.setClickable(true);
+                                    buildByText .setClickable(true);
+                                    showHuffmanCode.setClickable(true);
+                                    showAllCode.setClickable(true);
+                                }
+                            }).show();
+                }
+                else if(!allCodeString.equals("")){
+                    showAllCode();
+                }
             }
         });
     }
@@ -261,49 +325,136 @@ public class HuffmanActivity extends BaseActivity{
     public void readFile(String path){
 
         File file = new File(path);
+
         //非线程安全，但效率高，PS：这里我没用到线程
         StringBuilder content = new StringBuilder();
-        try{
+        try {
             FileInputStream is = new FileInputStream(file);
-            if(null != is){
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
-
-                //临时变量，用于暂时存储读取出来的一行数据
-                String line = "";
-                //逐行读取
-                while (true){
-                    line = br.readLine();
-                    if(line == null){
-                        break;
+            if (null != is) {
+                //读取压缩文件
+                if (file.getName().endsWith("code.dat")) {
+                    isCompressFile = true;
+                    DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+                    //用于存储编码字符串
+                    StringBuilder codeText = new StringBuilder();
+                    //记录最后一个编码长度
+                    int lastCodeCountNum = 0;
+                    //记录每八位编码表示的数字
+                    int codeNum;
+                    //二进制编码
+                    String codeNumText;
+                    //读取第一个字节用于表示文件大小的数
+                    codeNum = dataInputStream.readUnsignedByte();
+                    //将获取到的数转换为二进制
+                    codeNumText = Integer.toBinaryString(codeNum);
+                    //将二进制填满八位
+                    while (codeNumText.length() < 8) {
+                        codeNumText = 0 + codeNumText;
                     }
-                    content.append(line);
+                    //将前4个字节转换为一个数
+                    lastCodeCountNum = Integer.parseInt(codeNumText, 2);
+
+                    //读取编码
+                    int size = dataInputStream.available();
+                    for (int i = 0; i < size - 1; i++) {
+                        codeNum = dataInputStream.readUnsignedByte();
+                        //将获取到的数转换为二进制
+                        codeNumText = Integer.toBinaryString(codeNum);
+                        //将二进制填满八位
+                        while (codeNumText.length() < 8) {
+                            codeNumText = 0 + codeNumText;
+                        }
+                        codeText.append(codeNumText);
+                    }
+                    //读取最后一个编码，最后一个编码比较特殊，它不一定是八位
+                    codeNum = dataInputStream.readUnsignedByte();
+                    //将获取到的数转换为二进制
+                    codeNumText = Integer.toBinaryString(codeNum);
+                    //将二进制填满八位
+                    while (codeNumText.length() < lastCodeCountNum) {
+                        codeNumText = 0 + codeNumText;
+                    }
+                    codeText.append(codeNumText);
+                    allCodeString = codeText.toString();
+                    //编码文件读取完毕，开始读取编码文件对应的字符频率文件
+                    //根据读取的编码文件，读取相应的字符频率文件
+                    String huffmanFilePath = sdCardPath + "/A_test/" + file.getName().substring(0, file.getName().length() - 8) + "huffman.dat";
+                    File huffmanFile = new File(huffmanFilePath);
+                    ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(huffmanFile)));
+                    charTimes = (int[]) objectInputStream.readObject();
+
+                    onResumeHuffmanTree();
                 }
-                onResumeHuffmanTree(content.toString());
-                isr.close();
-                br.close();
+                //读取普通的文本文件
+                else if (file.getName().endsWith(".txt")) {
+                    isCompressFile = false;
+                    isSaved = false;
+                    //获取到文件的名字
+                    fileName = file.getName().substring(0, file.getName().length() - 4);
+                    //读取文本文件
+                    InputStreamReader isr = new InputStreamReader(is);
+                    BufferedReader br = new BufferedReader(isr);
+
+                    //临时变量，用于暂时存储读取出来的一行数据
+                    String line = "";
+                    //逐行读取
+                    while (true) {
+                        line = br.readLine();
+                        if (line == null) {
+                            break;
+                        }
+                        content.append(line);
+                    }
+                    isr.close();
+                    br.close();
+                    onResumeHuffmanTree(content.toString());
+                } else {
+                    Toast.makeText(this, "该文件暂不支持", Toast.LENGTH_SHORT).show();
+                }
                 is.close();
             }
-        }catch (FileNotFoundException e){
+        }
+        catch (FileNotFoundException e){
             e.printStackTrace();
             Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();
         }catch (IOException e){
             Toast.makeText(this, "读取错误", Toast.LENGTH_SHORT).show();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
+    /**
+     * 将字符频率表存入文件
+     * @param path
+     * @param fileName
+     */
+    public void saveCharTimes(String path, String fileName){
+        File file = new File(sdCardPath + "/" + path + "/" + fileName);
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+            objectOutputStream.writeObject(charTimes);
+            objectOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * 利用产生的哈夫曼树压缩文件
      * @param path
      * @param fileName
      */
     public void saveCompressedFile(String path, String fileName, String text){
-        //判断手机是否存在SD卡
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            //获取SD卡的当前的工作
-            sdCardPath  = Environment.getExternalStorageDirectory().getAbsolutePath();
-        }
         File tempFile = new File(sdCardPath + "/" +path + "/" + fileName);
+        //用一个字节来存储最后一个编码长度
+        int length = text.length()%8;
+        String tempString = "";
+        String byteLenth = Integer.toBinaryString(length);
+        for(int i= 0; i < 8 -  byteLenth.length(); i++){
+            tempString += "0";
+        }
+        byteLenth = tempString + byteLenth;
+        text = byteLenth + text;
         try {
             //创建二进制文件流
             DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tempFile)));
@@ -311,7 +462,7 @@ public class HuffmanActivity extends BaseActivity{
             int[] allCode = analysisByte(text);
             for(int i = 0; i < allCode.length; i++){
                 //以二进制的方式将编码存入文件
-                dataOutputStream.write(allCode[i]);
+                dataOutputStream.writeByte(allCode[i]);
             }
             dataOutputStream.close();
         } catch (FileNotFoundException e) {
@@ -403,6 +554,9 @@ public class HuffmanActivity extends BaseActivity{
                     if(text.equals("")){
                         return;
                     }
+                    fileName = "";
+                    isSaved = false;
+                    isCompressFile = false;
                     onResumeHuffmanTree(text);
                     //关闭输入提示框
                     inputPopupWindow.dismiss();
@@ -428,7 +582,7 @@ public class HuffmanActivity extends BaseActivity{
     }
 
     /**
-     * 每次进行绘制哈夫曼树之前做的准备，就是进行一些初始化的准备
+     * 通过从未压缩文件读取和输入框输入时，每次进行绘制哈夫曼树之前做的准备，就是进行一些初始化的准备
      * @param text
      */
     public void onResumeHuffmanTree(String text){
@@ -441,14 +595,14 @@ public class HuffmanActivity extends BaseActivity{
         //对传入进来的字符串进行筛选，防止危险字符使整个程序崩溃
         text = screenString(text);
         if(text == null || text.equals("")){
-            Toast.makeText(this,"该文件暂不支持！",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"文件错误！",Toast.LENGTH_SHORT).show();
             return;
         }
-        soureText = text;
-        //得打哈夫曼树
-        HuffmanTree tree = getHuffmanTree(getCharTimeByEditText(text));
+        sourceText = text;
+        //得到哈夫曼树
+        huffmanTree = getHuffmanTree(getCharTimeByEditText(text));
         //得到哈夫曼树的根节点
-        HuffmanTree.Node root = tree.root;
+        HuffmanTree.Node root = huffmanTree.root;
         getAllCode(root);
         if(show.getChildCount() > 1){
             show.removeViews(1,show.getChildCount() - 1);
@@ -456,6 +610,27 @@ public class HuffmanActivity extends BaseActivity{
         //绘制出根节点和相关线条
         show.addView(new CircleView(HuffmanActivity.this, width/2, 150f, 47f,root.weight + "",paint));
         showHuffman(root, width/2,150f, 1);
+    }
+
+    public void onResumeHuffmanTree(){
+        //绘制哈夫曼树
+        huffmanTree = getHuffmanTree(charTimes);
+        getAllCode(huffmanTree.root);
+        if(show.getChildCount() > 1){
+            show.removeViews(1,show.getChildCount() - 1);
+        }
+        //绘制出根节点和相关线条
+        show.addView(new CircleView(HuffmanActivity.this, width/2, 150f, 47f,huffmanTree.root.weight + "",paint));
+        showHuffman(huffmanTree.root, width/2,150f, 1);
+
+        //初始化相关数据
+        StringBuilder tempSourceText = new StringBuilder();
+        ArrayList<String> sourceTextList = deCode(leafCode,charTimes,allCodeString);
+        for(int i = 0; i < sourceTextList.size(); i++){
+            tempSourceText.append(sourceTextList.get(i));
+        }
+        //对传入进来的字符串进行筛选，防止危险字符使整个程序崩溃
+        sourceText = screenString(tempSourceText.toString());
     }
 
     /**
@@ -531,9 +706,9 @@ public class HuffmanActivity extends BaseActivity{
             //设置背景为半透明
             setBackgroundAlpha(0.35f);
             allCodeText = popupView.findViewById(R.id.allCodeText);
-            allCodeText.setText("原文：" + soureText + "\n\n编码后：" + allCodeString);
+            allCodeText.setText("原文：" + sourceText + "\n\n编码后：" + allCodeString);
         }else{
-            allCodeText.setText("原文：" + soureText + "\n\n编码后：" + allCodeString);
+            allCodeText.setText("原文：" + sourceText + "\n\n编码后：" + allCodeString);
             //设置背景为半透明
             setBackgroundAlpha(0.35f);
             //设置popupWindow显示的位置，这里我将其设置显示在屏幕中心
@@ -652,7 +827,7 @@ public class HuffmanActivity extends BaseActivity{
 
             for (int j = 0; j < leafCode.length; j++) {
                 if (charTimes[j] != 0 && leafCode[j].equals(temp)) {
-                    list.add(temp + " is " + (char)(j + 65));
+                    list.add("" + (char)(j + 65));
                     count = i + 1;
                 }
             }

@@ -5,8 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:background="@color/white"
-    android:layout_margin="3dp"
+    android:background="@drawable/coin_item_bg"
     android:textSize="23sp"
     android:alpha="0.5">
 </TextView>

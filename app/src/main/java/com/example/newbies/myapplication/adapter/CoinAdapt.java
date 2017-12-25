@@ -144,6 +144,11 @@ public class CoinAdapt extends RecyclerView.Adapter<CoinAdapt.ViewHolder>{
     public void setData(ArrayList<Character> data) {
         this.data = data;
         this.textViews.clear();
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<Character> getData(){
+        return this.data;
     }
 
     public void setCoinsModel(CoinsModel coinsModel) {
@@ -161,6 +166,4 @@ public class CoinAdapt extends RecyclerView.Adapter<CoinAdapt.ViewHolder>{
         }
         return node;
     }
-
-
 }

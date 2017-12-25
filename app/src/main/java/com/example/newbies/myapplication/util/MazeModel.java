@@ -60,7 +60,7 @@ public class MazeModel implements Serializable {
 		int randomNum = 0;
 		for(int i = 1; i < row + 1; i++){
 			for(int j = 1; j < column + 1; j++){
-				randomNum = (int)(Math.random() * 3);
+				randomNum = (int)(Math.random() * 3.7);
 				maze[i][j] = (randomNum == 0) ? 1:0;
 				subMaze[i - 1][j - 1] = maze[i][j];
 			}

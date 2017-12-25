@@ -197,25 +197,21 @@ public class CalculateRatio {
 
                                 // 根据组合列出算式
                                 if (m == 0 && n == 0) {
-                                    expression = "((" + (int) scard[0] + operator[i] + (int) scard[1] + ")"
-                                            + operator[j] + (int) scard[2] + ")" + operator[k] + (int) scard[3] + "="
-                                            + (int) sum;
+                                    expression = "((" + (int) scard[0] + operator[i] + (int) scard[1] + ")" + operator[j] + (int) scard[2] + ")" + operator[k] + (int) scard[3] + "=" + (int) sum;
                                 } else if (m == 0 && n == 1) {
-                                    expression = "(" + (int) scard[0] + operator[i] + (int) scard[1] + ")" + operator[k]
-                                            + "(" + (int) scard[2] + operator[j] + (int) scard[3] + ")=" + (int) sum;
+                                    expression = "(" + (int) scard[0] + operator[i] + (int) scard[1] + ")" + operator[k]  + "(" + (int) scard[2] + operator[j] + (int) scard[3] + ")=" + (int) sum;
                                 } else if (m == 1 && n == 0) {
-                                    expression = "(" + (int) scard[0] + operator[j] + "(" + (int) scard[1] + operator[i]
-                                            + (int) scard[2] + "))" + operator[k] + (int) scard[3] + "=" + (int) sum;
-                                } else if (m == 2 && n == 0) {
-                                    expression = "(" + (int) scard[0] + operator[j] + (int) scard[1] + ")" + operator[k]
-                                            + "(" + (int) scard[2] + operator[i] + (int) scard[3] + ")=" + (int) sum;
-                                } else if (m == 2 && n == 0) {
-                                    expression = (int) scard[0] + operator[k] + "(" + (int) scard[1] + operator[j] + "("
-                                            + (int) scard[2] + operator[i] + (int) scard[3] + "))=" + (int) sum;
+                                    expression = "(" + (int) scard[0] + operator[j] + "(" + (int) scard[1] + operator[i] + (int) scard[2] + "))" + operator[k] + (int) scard[3] + "=" + (int) sum;
+                                } else if(m == 1 && n == 1){
+                                    expression = ((int)scard[0]) + "" + operator[k] + "((" + (int) scard[1] + operator[i] + (int) scard[2] + ")" + operator[j] + (int) scard[3] + ")=" + (int) sum;
+                                } else if (m == 2 && n == 1) {
+                                    expression = ((int)scard[0]) + "" + operator[k] + "(" + (int) scard[1] + operator[j] + "(" + (int) scard[2] + operator[i] + (int) scard[3] + "))=" + (int) sum;
                                 }
 
                                 System.out.println(expression);
-                                expressionList.add(expression);
+                                if(!expression.equals("")){
+                                    expressionList.add(expression);
+                                }
                             }
                         }
                     }

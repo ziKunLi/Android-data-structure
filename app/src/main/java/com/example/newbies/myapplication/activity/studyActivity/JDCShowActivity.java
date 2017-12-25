@@ -322,6 +322,7 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                 jdc_select.closeDrawer(GravityCompat.START);
                 bstBar.setVisibility(View.VISIBLE);
                 showBstBar.start();
+                binaryTree = new BinaryTree<>();
                 break;
             case R.id.arrayListSearch:
                 break;
@@ -445,8 +446,6 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                     drawBST(binaryTree.getRoot(), width/2,150f, 1);
                 }catch (Exception e){
                     e.printStackTrace();
-
-                    Toast.makeText(this, binaryTree.getSize() + "", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.bstDelete:
@@ -461,7 +460,7 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                     //绘制其他结点
                     drawBST(binaryTree.getRoot(), width/2,150f, 1);
                 }catch (Exception e){
-                    Toast.makeText(this, "请确定你输入了正确的数", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
                 break;
             default:break;
@@ -498,6 +497,7 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                         mainView.removeViews(6,mainView.getChildCount() - 6);
                     }
                     bstBar.setVisibility(View.GONE);
+                    binaryTree = null;
                 }
 
                 //如果用来展示模拟线性结构的recycleView还是显示着的，那么将其隐藏

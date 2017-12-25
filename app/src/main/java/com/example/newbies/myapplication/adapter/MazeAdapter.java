@@ -93,7 +93,7 @@ public class MazeAdapter extends RecyclerView.Adapter<MazeAdapter.ViewHolder>{
      */
     public void findPath(ArrayList<Integer> path){
         for(int i = 1; i < path.size() - 1; i++){
-            viewHolders.get(path.get(i)).mazeItem.setBackgroundResource(R.color.riverWater);
+            viewHolders.get(path.get(i)).mazeItem.setBackgroundResource(R.drawable.ic_foot);
         }
     }
     /**

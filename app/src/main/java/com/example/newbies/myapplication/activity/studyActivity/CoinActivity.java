@@ -311,7 +311,6 @@ public class CoinActivity extends BaseActivity {
             recyclerView.setAdapter(coinAnswerAdapter);
             views.add(view);
         }
-
         /**
          * 用于切换视图的适配器
          */
@@ -343,7 +342,10 @@ public class CoinActivity extends BaseActivity {
 
             @Override
             public void destroyItem(ViewGroup container, int position, Object object){
-                container.removeView(views.get(position));
+                //简单地对BUG处理
+                if(position < views.size()){
+                    container.removeView(views.get(position));
+                }
             }
 
             /**
@@ -352,8 +354,9 @@ public class CoinActivity extends BaseActivity {
              */
             @Override
             public void startUpdate(ViewGroup container){
+                //如果加载的是同一个viewPager，那么当viewPager被关闭后重新打开时，position将会被记录下来
                 int position = step.getCurrentItem();
-                stepId.setText("步骤： " + (position + 1) + "");
+                stepId.setText("步骤： " + position + "");
             }
         };
         //为viewPager设置适配器

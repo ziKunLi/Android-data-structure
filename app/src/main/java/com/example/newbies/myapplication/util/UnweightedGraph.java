@@ -2,6 +2,7 @@ package com.example.newbies.myapplication.util;
 
 import com.example.newbies.myapplication.util.AbstractGraph;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UnweightedGraph<V> extends AbstractGraph<V> {
@@ -11,20 +12,16 @@ public class UnweightedGraph<V> extends AbstractGraph<V> {
 		super(edges, vertices);
 	}
 
-	public UnweightedGraph(List<Edge> edges, List<V> vertices){
-		super(edges, vertices);
-	}
-
 	public UnweightedGraph(List<Edge> edges, int numberOfVertices) {
 		super(edges, numberOfVertices);
 	}
 
-	public UnweightedGraph(int[][] edges, int numberOfVertices){
+	public UnweightedGraph(ArrayList<Edge> edges, int numberOfVertices){
 		super(edges, numberOfVertices);
 	}
 
 	@Override
-	public List<List<Edge>> getNeighbors() {
+	public List<List<UnweightEdge>> getNeighbors() {
 		return null;
 	}
 }

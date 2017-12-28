@@ -39,5 +39,5 @@ public interface Graph<V> {
 
 	public List<List<Integer>> getList();
 
-	public List<List<AbstractGraph.Edge>> getNeighbors();
+	public List<List<UnweightEdge>> getNeighbors();
 }

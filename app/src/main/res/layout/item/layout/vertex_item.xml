@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.newbies.myapplication.view.VertexView
+    android:id="@+id/site"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:background="@drawable/coin_item_bg">
+</com.example.newbies.myapplication.view.VertexView>

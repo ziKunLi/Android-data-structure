@@ -9,8 +9,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class AbstractGraph<V> implements Graph<V> {
-	protected List<V> vertices;//用于存储结点
-	protected List<List<Integer>> neighbors;//邻接表
+	/**
+	 * 用于存储结点
+	 */
+	protected List<V> vertices;
+	/**
+	 * 邻接表
+	 */
+	protected List<List<Integer>> neighbors;
+
+	/**
+	 * 空的构造方法
+	 */
+	protected AbstractGraph() {
+	}
 
 	/**从数组中存储的边和顶点构造一个图**/
 	public AbstractGraph(int[][] edges, V[] vertices){
@@ -31,7 +43,8 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 	protected AbstractGraph(List<Edge> edges, int numberOfVertices){
 		vertices = new ArrayList<V>();
 		for(int i = 0; i < numberOfVertices; i++){
-			vertices.add((V)(new Integer(i)));//顶点是{0,1,2,3...}
+			//顶点是{0,1,2,3...}
+			vertices.add((V)(new Integer(i)));
 		}
 
 		createAdjacencyLists(edges, numberOfVertices);
@@ -39,14 +52,34 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 
 	@SuppressWarnings("unchecked")
 	protected AbstractGraph(int[][] edges, int numberOfVertices){
-		vertices = new ArrayList<V>();//创建顶点
+		//创建顶点
+		vertices = new ArrayList<V>();
 		for(int i = 0; i < numberOfVertices; i++){
-			vertices.add((V)(new Integer(i)));//顶点是{1,2,3...}
+			//顶点是{1,2,3...}
+			vertices.add((V)(new Integer(i)));
 		}
 
 		createAdjacencyLists(edges, numberOfVertices);
 	}
 
+	/**
+	 * 向图中加入顶点
+	 * @param vertex
+	 */
+	public void addVertex(V vertex) {
+		vertices.add(vertex);
+		neighbors.add(new ArrayList<Integer>());
+	}
+
+	/**
+	 * 向图中加入边
+	 * @param u
+	 * @param v
+	 */
+	public void addEdge(int u, int v) {
+		neighbors.get(u).add(v);
+		neighbors.get(v).add(u);
+	}
 	/**
 	 * 为每个顶点创建一个邻接线性表
 	 * @param edges
@@ -175,13 +208,23 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 	 * @author NewBies
 	 */
 	public static class Edge{
-		public int u;//起始顶点
-		public int v;//结束顶点
+		//起始顶点
+		public int u;
+		//结束顶点
+		public int v;
 
 		/**创建默认起始顶点和终止顶点的构造器**/
 		public Edge(int u, int v){
 			this.u = u;
 			this.v = v;
+		}
+
+		@Override
+		public boolean equals(Object o){
+			if(o instanceof  Edge){
+				return this.u == ((Edge)o).u && this.v == ((Edge)o).v;
+			}
+			return false;
 		}
 	}
 

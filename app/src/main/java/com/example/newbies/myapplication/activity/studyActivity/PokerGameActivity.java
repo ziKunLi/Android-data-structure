@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.newbies.myapplication.R;
 import com.example.newbies.myapplication.activity.BaseActivity;
 import com.example.newbies.myapplication.util.CalculateRatio;
+import com.example.newbies.myapplication.util.ComputeExpressionUtil;
 
 import java.util.ArrayList;
 
@@ -239,6 +240,7 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
         customizeStart.setOnClickListener(this);
         showAnswer.setOnClickListener(this);
         randomStart.setOnClickListener(this);
+        sure.setOnClickListener(this);
     }
 
     /**
@@ -544,13 +546,8 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
      * 判断表达式是否正确
      * @return
      */
-    public boolean computeResult() {
-        int result = 0;
-        expression = inputAnswer.getText().toString();
-        for(int i = 0;i < expression.length(); i++){
-
-        }
-        return false;
+    public boolean computeResult(String expression) {
+        return ComputeExpressionUtil.computeInFix(expression) == 24;
     }
 
     /**
@@ -619,6 +616,14 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
                     num4.setText("");
                 }
                 break;
+            case R.id.sure:
+                if(computeResult(expression)){
+                    Toast.makeText(this, "可以！居然对了", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(this, "菜鸡！这都不会", Toast.LENGTH_SHORT).show();
+                }
+                break;
             case R.id.add:
                 inputAnswer.setText(expression + "+");
                 break;
@@ -657,8 +662,7 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
                 setSelectPokerPop();
                 break;
             case R.id.showAnswer:
-                expressionList = CalculateRatio.getExpression(Integer.parseInt(num1.getText().toString()),
-                        Integer.parseInt(num2.getText().toString()), Integer.parseInt(num3.getText().toString()), Integer.parseInt(num4.getText().toString()));
+                expressionList = CalculateRatio.getExpression(random1 + 1,random2 + 1, random3 + 1, random4 + 1);
                 setShowAnswerPop();
                 break;
             case R.id.randomStart:

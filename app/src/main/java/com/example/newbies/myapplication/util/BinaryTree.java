@@ -178,7 +178,7 @@ public class BinaryTree<E extends Comparable<E>> extends AbstractTree<E>{
 			TreeNode<E> parentOfRightMost = current;
 			TreeNode<E> rightMost = current.left;
 
-			while(rightMost != null){
+			while(rightMost.right != null){
 				parentOfRightMost = rightMost;
 				//一直向右走
 				rightMost = rightMost.right;
@@ -193,7 +193,7 @@ public class BinaryTree<E extends Comparable<E>> extends AbstractTree<E>{
 			}
 			else{
 				//特殊情况：最右的父节点等于current
-				parentOfRightMost = rightMost.left;
+				parentOfRightMost.left = rightMost.left;
 			}
 		}
 

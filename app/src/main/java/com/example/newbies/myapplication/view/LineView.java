@@ -3,6 +3,7 @@ package com.example.newbies.myapplication.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -16,7 +17,6 @@ public class LineView extends View {
     private float startY;
     private float endX;
     private float endY;
-    private String text;
     private Paint paint;
 
     public LineView(Context context){
@@ -36,7 +36,6 @@ public class LineView extends View {
     protected void onDraw(Canvas canvas){
         if(paint != null){
             canvas.drawLine(startX, startY, endX, endY, paint);
-//            canvas.drawText(text,(startX + endX)/2, (startY + endY)/2 + 10,paint);
         }
     }
 }

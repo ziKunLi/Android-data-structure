@@ -1,6 +1,7 @@
 package com.example.newbies.myapplication.view;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,7 +15,7 @@ import com.example.newbies.myapplication.util.LineUtil;
  * @author NewBies
  * @date 2017/12/26
  */
-public class VertexView extends android.support.v7.widget.AppCompatTextView {
+public class VertexView extends android.support.v7.widget.AppCompatTextView implements Comparable{
 
     private int startX;
     private int startY;
@@ -114,5 +115,21 @@ public class VertexView extends android.support.v7.widget.AppCompatTextView {
     @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        if(o instanceof VertexView){
+            if(this.getId() < ((VertexView)o).getId()){
+                return -1;
+            }
+            else if(this.getId() > ((VertexView)o).getId()){
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+        return 0;
     }
 }

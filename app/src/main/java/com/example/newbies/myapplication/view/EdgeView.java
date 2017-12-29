@@ -16,7 +16,10 @@ public class EdgeView extends AppCompatTextView{
     private float startY;
     private float endX;
     private float endY;
-    private Paint paint;
+    private Paint linePaint;
+    private boolean isChanged = false;
+    private boolean isEnd = false;
+    private int length = 0;
 
     public EdgeView(Context context){
         super(context);
@@ -28,7 +31,7 @@ public class EdgeView extends AppCompatTextView{
         this.startY = startY;
         this.endX = endX;
         this.endY = endY;
-        this.paint = paint;
+        this.linePaint = paint;
     }
 
     /**
@@ -54,9 +57,21 @@ public class EdgeView extends AppCompatTextView{
         this.invalidate();
     }
 
+    /**
+     * 设置带箭头的线
+     * @param isEnd
+     * @param paint
+     */
+    public void resetLine(boolean isEnd, Paint paint){
+        this.isChanged = true;
+        this.isEnd = isEnd;
+        this.linePaint = paint;
+        this.invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas){
-        if(paint != null){
+        if(linePaint != null){
             double cos = Math.cos(Math.atan(Math.abs(endY - startY)/Math.abs(endX - startX)));
             double sin = Math.sin(Math.atan(Math.abs(endY - startY)/Math.abs(endX - startX)));
             //计算距离圆心的偏移量
@@ -82,8 +97,41 @@ public class EdgeView extends AppCompatTextView{
                 trueStartY = startY - offsetY;
                 trueEndY = endY + offsetY;
             }
-            canvas.drawLine(trueStartX, trueStartY, trueEndX, trueEndY, paint);
-            canvas.drawCircle(trueStartX,trueStartY,10,paint);
+            //绘制线
+            canvas.drawLine(trueStartX, trueStartY, trueEndX, trueEndY, linePaint);
+            //以下代码虽被废弃，但价值存在
+//            length = (int) Math.sqrt(Math.pow(Math.abs(trueStartX - trueEndX),2) + Math.pow(Math.abs(trueStartY - trueEndY), 2));
+
+            //绘制箭头
+            if(isChanged){
+                if(isEnd){
+                    canvas.drawCircle(trueEndX,trueEndY,10,linePaint);
+                }
+                else {
+                    canvas.drawCircle(trueStartX,trueStartY,10,linePaint);
+                }
+            }
         }
+    }
+
+    public boolean isChanged() {
+        return isChanged;
+    }
+
+    public void setChanged(boolean changed) {
+        isChanged = changed;
+        this.invalidate();
+    }
+
+    public Paint getLinePaint() {
+        return linePaint;
+    }
+
+    public void setLinePaint(Paint linePaint) {
+        this.linePaint = linePaint;
+    }
+
+    public int getLength(){
+        return length;
     }
 }

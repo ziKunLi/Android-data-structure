@@ -1,13 +1,14 @@
 package com.example.newbies.myapplication.util;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.example.newbies.myapplication.view.EdgeView;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -21,27 +22,17 @@ public class LineUtil{
     /**
      * 用于暂存用于连接的两个顶点
      */
-    private ArrayList<View> lineForTowView;
-    private ArrayList<View> views;
-    private HashMap<View, ArrayList<Line>> vertexLine;
-    private ArrayList<AbstractGraph.Edge> edges;
+    private ArrayList<View> lineForTowView  = new ArrayList<>(2);
+    private ArrayList<View> views  = new ArrayList<>();
+    private HashMap<View, ArrayList<Line>> vertexLine = new HashMap<>();
+    private ArrayList<AbstractGraph.Edge> edges = new ArrayList<>();
     private Graph<Integer> graph;
-//    private ArrayList<AbstractGraph.Edge> unWeightEdges;
-//    private ArrayList<WeightedEdge> weightedEdges;
-//    private UnweightedGraph<Integer> unWeightedGraph = null;
-//    private WeightedGraph weightedGraph = null;
     private AbstractGraph.Tree tree = null;
     private ViewGroup drawPane;
     private Context context;
     private Paint paint;
 
     private LineUtil(){
-        lineForTowView = new ArrayList<>(2);
-        views = new ArrayList<>();
-        vertexLine = new HashMap<>();
-//        unWeightEdges = new ArrayList<>();
-//        weightedEdges = new ArrayList<>();
-        edges = new ArrayList<>();
         graphType = GraphType.UNWEIGHT_GRAPH;
     }
 
@@ -60,10 +51,12 @@ public class LineUtil{
         this.drawPane = drawPane;
         this.graphType = graphType;
         this.paint = paint;
+        this.clear();
     }
 
     public void setGraphType(GraphType graphType){
         this.graphType = graphType;
+        this.clear();
     }
 
     /**
@@ -117,10 +110,7 @@ public class LineUtil{
                     vertexLine.get(startVertex).add(new Line(edgeView,EdgeState.START,endVertex.getId()));
                     vertexLine.get(endVertex).add((new Line(edgeView,EdgeState.END,startVertex.getId())));
                 }
-
             }
-
-
         }
         if(!vertexLine.containsKey(view)){
             ArrayList<Line> lineViews = new ArrayList<>();
@@ -145,6 +135,7 @@ public class LineUtil{
      */
     public void sendUpdataLineMessage(View view){
         ArrayList<Line> lines = vertexLine.get(view);
+
         for(int i = 0; i < lines.size(); i++){
             Line line = lines.get(i);
             if(line.getState() == EdgeState.START){
@@ -153,6 +144,15 @@ public class LineUtil{
             else {
                 line.getEdgeView().resetEndPoint(view.getX() + 50,view.getY() + 50);
             }
+            //以下代码虽被废弃，但价值存在
+//            //如果是带权图，那么在移动顶点时，权值也应该改变
+//            if(GraphType.WEIGHT_GRAPH == graphType){
+//                for(int j = 0; j < edges.size(); j++){
+//                    if(edges.get(j).u == view.getId()&&edges.get(j).v == line.getEndPointId()||edges.get(j).v == view.getId()&&edges.get(j).u == line.getEndPointId()){
+//                        ((WeightedEdge)edges.get(j)).weight = line.getEdgeView().getLength();
+//                    }
+//                }
+//            }
         }
     }
 
@@ -161,15 +161,25 @@ public class LineUtil{
      * @param startVertex
      */
     public void sendDfsMessage(int startVertex){
-        if(graphType == GraphType.UNWEIGHT_GRAPH){
-            graph = new UnweightedGraph<Integer>(edges,edges.size());
-        }
-        else {
-            graph = new WeightedGraph<Integer>(edges,edges.size());
+        if(newGraph()){
+            return;
         }
         tree = graph.dfs(startVertex);
-        ArrayList<Integer> dfs = (ArrayList<Integer>) tree.getSearchOrders();
-        System.out.println(tree.getSearchOrders());
+        ArrayList<AbstractGraph.Edge> dfs = tree.getTree(startVertex);
+        drawTree(dfs);
+    }
+
+    /**
+     * 发送进行广度优先遍历的消息，进行深度优先遍历
+     * @param startVertex
+     */
+    public void sendBfsMessage(int startVertex){
+        if(newGraph()){
+            return;
+        }
+        tree = graph.bfs(startVertex);
+        ArrayList<AbstractGraph.Edge> bfs = tree.getTree(startVertex);
+        drawTree(bfs);
     }
 
     /**
@@ -178,9 +188,88 @@ public class LineUtil{
      * @param endVertex
      */
     public void sendPathMessage(int startVertex, int endVertex){
-        graph = new UnweightedGraph<Integer>(edges,edges.size());
-        tree = graph.dfs(endVertex);
-        ArrayList<Integer> path = (ArrayList<Integer>) tree.getPath(startVertex);
+        if(newGraph()){
+            return;
+        }
+        tree = graph.dfs(startVertex);
+        ArrayList<AbstractGraph.Edge> path = tree.findPath(endVertex);
+        drawTree(path);
+    }
+
+    private void drawTree(ArrayList<AbstractGraph.Edge> tree){
+        for(int i = 0; i < tree.size(); i++){
+            View startView = views.get(tree.get(i).u);
+
+            ArrayList<Line> lines = vertexLine.get(startView);
+            for(int j = 0; j < lines.size(); j++){
+                if(lines.get(j).getEndPointId() == tree.get(i).v){
+                    Paint paint = new Paint();
+                    //设置画笔的颜色
+                    paint.setColor(Color.RED);
+                    //设置画笔的锯齿效果
+                    paint.setAntiAlias(true);
+                    //设置画笔的风格（空心或实心）
+                    paint.setStyle(Paint.Style.STROKE);
+                    paint.setStrokeWidth(5);
+                    //设置画笔文字大小
+                    paint.setTextSize(60);
+                    //设置文字居中
+                    paint.setTextAlign(Paint.Align.CENTER);
+                    //判断这个点在划线是终点还是起点，然后判断箭头的坐标
+                    if(lines.get(j).getState() == EdgeState.START){
+                        lines.get(j).lineView.resetLine(true,paint);
+                    }
+                    else {
+                        lines.get(j).lineView.resetLine(false,paint);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean newGraph(){
+        //判断该图是否连通
+        for(int i = 0; i < vertexLine.size(); i++){
+            if(vertexLine.get(views.get(i)).size() == 0){
+                Toast.makeText(context, "请将图连通！", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+
+        if(graphType == GraphType.UNWEIGHT_GRAPH){
+            graph = new UnweightedGraph<>(edges,edges.size());
+        }
+        else {
+            graph = new WeightedGraph<>(edges,edges.size());
+        }
+        Collections.sort(views,new VertexViewComparator());
+
+        return false;
+    }
+
+    public void sendUpdataMessage(){
+        Paint paint = new Paint();
+        //设置画笔的颜色
+        paint.setColor(Color.BLACK);
+        //设置画笔的锯齿效果
+        paint.setAntiAlias(true);
+        //设置画笔的风格（空心或实心）
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+        //设置画笔文字大小
+        paint.setTextSize(60);
+        //设置文字居中
+        paint.setTextAlign(Paint.Align.CENTER);
+        for(int i = 0; i < views.size(); i++){
+            ArrayList<Line> lines = vertexLine.get(views.get(i));
+            for(int j = 0; j < lines.size(); j++){
+                if(lines.get(j).lineView.isChanged()){
+                    lines.get(j).lineView.setLinePaint(paint);
+                    lines.get(j).lineView.setChanged(false);
+                }
+            }
+        }
     }
 
     /**
@@ -194,9 +283,22 @@ public class LineUtil{
         graph = null;
     }
 
+    public int getVertexSize(){
+        return views.size();
+    }
+
     class Line{
+        /**
+         * 线
+         */
         private EdgeView lineView;
+        /**
+         * 这条线相对于一个点的状态
+         */
         private EdgeState state;
+        /**
+         * 结束点ID
+         */
         private int endPointId;
 
         public Line(EdgeView lineView, EdgeState state, int endPointId){
@@ -233,5 +335,4 @@ public class LineUtil{
         UNWEIGHT_GRAPH,
         WEIGHT_GRAPH
     }
-
 }

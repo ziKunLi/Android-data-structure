@@ -44,6 +44,8 @@ import com.example.newbies.myapplication.util.MyList;
 import com.example.newbies.myapplication.view.CircleView;
 import com.example.newbies.myapplication.view.LineView;
 import com.example.newbies.myapplication.view.VertexView;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ import java.util.List;
  */
 public class JDCShowActivity extends BaseActivity implements View.OnClickListener{
 
+    private static final int SIZE = 8;
     /**
      * 屏幕的高和宽
      */
@@ -136,12 +139,19 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
      * graph顶部操作按钮
      */
     private LinearLayout addSite;
-    private LinearLayout startVertex;
-    private LinearLayout endVertex;
+    private EditText startVertex;
+    private EditText endVertex;
     private LinearLayout dfs;
     private LinearLayout bfs;
     private LinearLayout shortestPath;
     private LinearLayout minTree;
+    /**
+     * 对已经绘制图形的撤销，前进，刷新操作
+     */
+    private FloatingActionsMenu graphFloatButton;
+    private FloatingActionButton updata;
+    private FloatingActionButton redo;
+    private FloatingActionButton undo;
     /**
      * 底部操作栏菜单
      */
@@ -158,21 +168,23 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
     /**
      * 显示底部操作菜单的动画
      */
-    ObjectAnimator showArrayListBar;
-    ObjectAnimator showLinkedListBar;
-    ObjectAnimator showStackBar;
-    ObjectAnimator showQueueBar;
-    ObjectAnimator showBstBar;
-    ObjectAnimator showGraphBar;
+    private ObjectAnimator showArrayListBar;
+    private ObjectAnimator showLinkedListBar;
+    private ObjectAnimator showStackBar;
+    private ObjectAnimator showQueueBar;
+    private ObjectAnimator showBstBar;
+    private ObjectAnimator showGraphBar;
+    private ObjectAnimator showFloatButton;
     /**
      * 关闭底部操作菜单的动画
      */
-    ObjectAnimator closeArrayListBar;
-    ObjectAnimator closeLinkedListBar;
-    ObjectAnimator closeStackBar;
-    ObjectAnimator closeQueueBar;
-    ObjectAnimator closeGraphBar;
-    ObjectAnimator closeBstBar;
+    private ObjectAnimator closeArrayListBar;
+    private ObjectAnimator closeLinkedListBar;
+    private ObjectAnimator closeStackBar;
+    private ObjectAnimator closeQueueBar;
+    private ObjectAnimator closeGraphBar;
+    private ObjectAnimator closeBstBar;
+    private ObjectAnimator closeFloatButton;
     /**
      * 用于展示提示消息的弹窗
      */
@@ -194,6 +206,9 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
 
     private int vertexCurrent = 0;
     private ArrayList<Vertex> vertices;
+    /**
+     * 绘制图时的工具类
+     */
     private LineUtil lineUtil;
 
     @Override
@@ -293,12 +308,16 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
         bstDelete = (Button)findViewById(R.id.bstDelete);
         //graph顶部操作栏相关组件
         addSite = (LinearLayout)findViewById(R.id.addSite);
-        startVertex = (LinearLayout)findViewById(R.id.startVertex);
-        endVertex = (LinearLayout)findViewById(R.id.endVertex);
+        startVertex = (EditText)findViewById(R.id.startVertex);
+        endVertex = (EditText)findViewById(R.id.endVertex);
         dfs = (LinearLayout)findViewById(R.id.dfs);
         bfs = (LinearLayout)findViewById(R.id.bfs);
         shortestPath = (LinearLayout)findViewById(R.id.shortestPath);
         minTree = (LinearLayout)findViewById(R.id.minTree);
+        graphFloatButton = (FloatingActionsMenu)findViewById(R.id.graphFloatButton);
+        updata = (FloatingActionButton)findViewById(R.id.upData);
+        undo = (FloatingActionButton)findViewById(R.id.undo);
+        redo = (FloatingActionButton)findViewById(R.id.redo);
         //用于绘制图形的画布
         mainView = (FrameLayout)findViewById(R.id.mainView);
         //默认将抽屉打开，以便于提示用户，这里有一个抽屉
@@ -368,12 +387,20 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                 jdc_select.closeDrawer(GravityCompat.START);
                 graphBar.setVisibility(View.VISIBLE);
                 showGraphBar.start();
+                //用于绘制图的线条的工具类
+                lineUtil.setDrawPane(this,mainView, LineUtil.GraphType.UNWEIGHT_GRAPH,paint);
+                graphFloatButton.setVisibility(View.VISIBLE);
+                showFloatButton.start();
                 break;
             case R.id.weightGraph:
                 //关闭抽屉
                 jdc_select.closeDrawer(GravityCompat.START);
                 graphBar.setVisibility(View.VISIBLE);
                 showGraphBar.start();
+                //用于绘制图的线条的工具类
+                lineUtil.setDrawPane(this,mainView, LineUtil.GraphType.WEIGHT_GRAPH,paint);
+                graphFloatButton.setVisibility(View.VISIBLE);
+                showFloatButton.start();
                 break;
             case R.id.arrayListSearch:
                 break;
@@ -487,9 +514,9 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
             case R.id.bstAdd:
                 try {
                     binaryTree.insert(Integer.parseInt(bstValue.getText().toString()));
-                    if(mainView.getChildCount() > 7){
+                    if(mainView.getChildCount() > SIZE){
                         //从第6个开始删除，删除mainView.getChildCount() - 6个view，也就是把面板上的二叉查找树删除完了
-                        mainView.removeViews(7,mainView.getChildCount() - 7);
+                        mainView.removeViews(SIZE,mainView.getChildCount() - SIZE);
                     }
                     //绘制出根节点和相关线条
                     mainView.addView(new CircleView(this, width/2, 150f, 47f,binaryTree.getRoot().element + "",paint));
@@ -502,9 +529,9 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
             case R.id.bstDelete:
                 try {
                     binaryTree.delete(Integer.parseInt(bstValue.getText().toString()));
-                    if(mainView.getChildCount() > 7){
+                    if(mainView.getChildCount() > SIZE){
                         //从第6个开始删除，删除mainView.getChildCount() - 7个view，也就是把面板上的二叉查找树删除完了
-                        mainView.removeViews(7,mainView.getChildCount() - 7);
+                        mainView.removeViews(SIZE,mainView.getChildCount() - SIZE);
                     }
                     //绘制出根节点和相关线条
                     mainView.addView(new CircleView(this, width/2, 150f, 47f,binaryTree.getRoot().element + "",paint));
@@ -528,18 +555,55 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                 //刷新组件位置
                 vertexView.requestLayout();
                 break;
-            case R.id.startVertex:
-                break;
-            case R.id.endVertex:
-                break;
             case R.id.dfs:
-                lineUtil.sendDfsMessage(0);
+                lineUtil.sendUpdataMessage();
+                endVertex.setClickable(false);
+                try{
+                    int start = Integer.parseInt(startVertex.getText().toString()) - 1;
+                    if(start < 0||start > lineUtil.getVertexSize() - 1){
+                        throw new Exception();
+                    }
+                    lineUtil.sendDfsMessage(start);
+                }catch (Exception e){
+                    Toast.makeText(this, "请输入正确的起点！", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.bfs:
+                lineUtil.sendUpdataMessage();
+                endVertex.setClickable(false);
+                try{
+                    int start = Integer.parseInt(startVertex.getText().toString()) - 1;
+                    if(start < 0||start > lineUtil.getVertexSize() - 1){
+                        throw new Exception();
+                    }
+                    lineUtil.sendBfsMessage(start);
+                }catch (Exception e){
+                    Toast.makeText(this, "请输入正确的起点！", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.shortestPath:
+                lineUtil.sendUpdataMessage();
+                endVertex.setClickable(true);
+                try{
+                    int start = Integer.parseInt(startVertex.getText().toString()) - 1;
+                    int end = Integer.parseInt(endVertex.getText().toString()) - 1;
+                    if(start < 0||start >= end||end > lineUtil.getVertexSize() - 1){
+                        System.out.println(start + "||||" + end);
+                        throw new Exception();
+                    }
+                    lineUtil.sendPathMessage(start, end);
+                }catch (Exception e){
+                    Toast.makeText(this, "请输入正确的起点或终点！", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.minTree:
+                break;
+            case R.id.upData:
+                lineUtil.sendUpdataMessage();
+                break;
+            case R.id.undo:
+                break;
+            case R.id.redo:
                 break;
             default:break;
         }
@@ -569,18 +633,20 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                 }
                 else if(bstBar.getVisibility() == View.VISIBLE){
                     closeBstBar.start();
-                    if(mainView.getChildCount() > 7){
-                        //从第7个开始删除，删除mainView.getChildCount() - 6个view，也就是把面板上的二叉查找树删除完了
-                        mainView.removeViews(7,mainView.getChildCount() - 7);
+                    if(mainView.getChildCount() > SIZE){
+                        //从第size个开始删除，删除mainView.getChildCount() - size个view，也就是把面板上的二叉查找树删除完了
+                        mainView.removeViews(SIZE,mainView.getChildCount() - SIZE);
                     }
                     bstBar.setVisibility(View.GONE);
                     binaryTree = null;
                 }
                 else if(graphBar.getVisibility() == View.VISIBLE){
-                    mainView.removeViews(7,mainView.getChildCount() - 7);
+                    mainView.removeViews(SIZE,mainView.getChildCount() - SIZE);
                     graphBar.setVisibility(View.GONE);
                     vertexCurrent = 0;
                     closeGraphBar.start();
+                    closeFloatButton.start();
+                    graphFloatButton.setVisibility(View.GONE);
                     lineUtil.clear();
                 }
 
@@ -621,8 +687,9 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
         //为graph设置相应的事件响应
         addSite.setOnClickListener(this);
         dfs.setOnClickListener(this);
-        //用于绘制图的线条的工具类
-        lineUtil.setDrawPane(this,mainView, LineUtil.GraphType.UNWEIGHT_GRAPH,paint);
+        bfs.setOnClickListener(this);
+        shortestPath.setOnClickListener(this);
+        updata.setOnClickListener(this);
     }
 
     /**
@@ -636,12 +703,14 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
         showQueueBar = ObjectAnimator.ofFloat(queueBar, "y",height,height - 150);
         showBstBar = ObjectAnimator.ofFloat(bstBar,"y",height,height - 150);
         showGraphBar = ObjectAnimator.ofFloat(graphBar,"y",-(int)dpToPx(50),0);
+        showFloatButton = ObjectAnimator.ofFloat(graphFloatButton,"y",height,height - 930);
         showArrayListBar.setDuration(500);
         showLinkedListBar.setDuration(500);
         showStackBar.setDuration(500);
         showQueueBar.setDuration(500);
         showBstBar.setDuration(500);
         showGraphBar.setDuration(500);
+        showFloatButton.setDuration(500);
         //底部操作栏关闭动画
         closeArrayListBar = ObjectAnimator.ofFloat(arrayListBar, "y",height - 300, height);
         closeLinkedListBar = ObjectAnimator.ofFloat(linkedListBar,"y",height - 300, height);
@@ -649,11 +718,13 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
         closeQueueBar = ObjectAnimator.ofFloat(queueBar,"y",height - 150,height);
         closeBstBar = ObjectAnimator.ofFloat(bstBar,"y",height - 150, height);
         closeGraphBar = ObjectAnimator.ofFloat(graphBar,"y",0,-(int)dpToPx(50));
+        closeFloatButton = ObjectAnimator.ofFloat(graphFloatButton,"y",height - 930,height);
         closeArrayListBar.setDuration(500);
         closeLinkedListBar.setDuration(500);
         closeStackBar.setDuration(500);
         closeBstBar.setDuration(500);
         closeGraphBar.setDuration(500);
+        closeFloatButton.setDuration(500);
     }
 
     public void initPaint(){

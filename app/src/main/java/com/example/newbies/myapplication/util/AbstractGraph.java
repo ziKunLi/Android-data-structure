@@ -5,6 +5,8 @@ import android.util.Log;
 import com.example.newbies.myapplication.util.Graph;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -114,6 +116,16 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 
 		for(Edge edge : edges){
 			neighbors.get(edge.u).add(edge.v);
+		}
+
+		if (edges.get(0) instanceof WeightedEdge){
+			return;
+		}
+		/**
+		 * 对邻居排序
+		 */
+		for(int i = 0; i < neighbors.size(); i++){
+			Collections.sort(neighbors.get(i));
 		}
 	}
 
@@ -228,7 +240,7 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 		}
 	}
 
-	/**获得从顶点v开始的DFS树，并在27.6进行讨论**/
+	/**获得从顶点v开始的DFS树**/
 	@Override
 	public Tree dfs(int v){
 		List<Integer> searchOrders = new ArrayList<Integer>();
@@ -350,8 +362,19 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 			return path;
 		}
 
+		/**返回顶点索引到根节点的路径**/
+		public ArrayList<Edge> findPath(int index){
+			ArrayList<Edge> path = new ArrayList<>();
 
-		/**打印从根节点到顶点v的路径**/
+			//index为-1，表示该点没有父节点
+			while(index != -1){
+				path.add(new Edge(parent[index],(Integer)vertices.get(index)));
+				index = parent[index];
+			}
+			path.remove(path.size() - 1);
+			return path;
+		}
+
 		public void printPath(int index){
 			List<V> path = getPath(index);
 			System.out.print("A path from " + vertices.get(root) + " to " + vertices.get(index) + ": ");
@@ -359,6 +382,7 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 				System.out.print(path.get(i) + " ");
 			}
 		}
+
 
 		/**打印整颗树**/
 		public void printTree(){
@@ -371,6 +395,16 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 				}
 			}
 			System.out.println();
+		}
+
+		public ArrayList<Edge> getTree(int startVertex){
+			ArrayList<Edge> edges = new ArrayList<AbstractGraph.Edge>();
+			for(int i = startVertex; i < parent.length + startVertex; i++){
+				if(parent[i%parent.length] != -1){
+					edges.add(new Edge((Integer) vertices.get(parent[i%parent.length]), (Integer)vertices.get(i%parent.length)));
+				}
+			}
+			return edges;
 		}
 	}
 }

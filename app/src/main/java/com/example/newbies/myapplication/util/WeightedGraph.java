@@ -1,9 +1,8 @@
 package com.example.newbies.myapplication.util;
 
-import com.example.newbies.myapplication.util.AbstractGraph;
-import com.example.newbies.myapplication.util.WeightedEdge;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -24,11 +23,12 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
     }
 
 
+
     /**
      * 为顶点0,1,2和边列表构造一个WeightedGraph
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public WeightedGraph(List<WeightedEdge> edges, List<V> vertices) {
+    public WeightedGraph(List<Edge> edges, List<V> vertices) {
         super((List) edges, vertices);
         createQueues(edges, vertices.size());
     }
@@ -37,7 +37,7 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
      * 从顶点0,1和边数组构造一个WeightedGraph
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public WeightedGraph(List<WeightedEdge> edges, int numberOfVertices) {
+    public WeightedGraph(List<Edge> edges, int numberOfVertices) {
         super((List) edges, numberOfVertices);
         createQueues(edges, numberOfVertices);
     }
@@ -63,15 +63,17 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
     /**
      * 根据边创建优先邻接矩阵
      */
-    private void createQueues(List<WeightedEdge> edges, int numberOfVertices) {
+    private void createQueues(List<Edge> edges, int numberOfVertices) {
         for (int i = 0; i < numberOfVertices; i++) {
             // 创建一个队列
             queues.add(new PriorityQueue<WeightedEdge>());
         }
 
-        for (WeightedEdge edge : edges) {
+        for (Edge edge : edges) {
             // 向队列中插入边
-            queues.get(edge.u).offer(edge);
+            if(edge instanceof WeightedEdge){
+                queues.get(edge.u).offer((WeightedEdge) edge);
+            }
         }
     }
 
@@ -214,7 +216,9 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
      *  最小生成树
      */
     public class MST extends Tree {
-        // Total weight of all edges in the tree
+        /**
+         * 最小生成树的权重总和
+         */
         private double totalWeight;
 
         public MST(int root, int[] parent, List<Integer> searchOrder,
@@ -229,10 +233,10 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
     }
 
     /**
-     * Find single source shortest paths
+     * 查找最短路径
      */
     public ShortestPathTree getShortestPath(int sourceIndex) {
-        // T stores the vertices whose path found so far
+        // 用于存储顶点
         List<Integer> T = new ArrayList<Integer>();
         // T initially contains the sourceVertex;
         T.add(sourceIndex);
@@ -279,18 +283,18 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
                 if (costs[u] + e.weight < smallestCost) {
                     v = e.v;
                     smallestCost = costs[u] + e.weight;
-                    // If v is added to the tree, u will be its parent
+                    // 如果V添加到了树中，那么u就是他的parent
                     parent[v] = u;
                 }
             }
-            // End of for
+            // 循环结束
 
-            // Add a new vertex to T
+            // 将一个新的顶点添加到T中
             T.add(v);
             costs[v] = smallestCost;
-        } // End of while
+        } //结束循环
 
-        // Create a ShortestPathTree
+        // 创建一棵树
         return new ShortestPathTree(sourceIndex, parent, T, costs);
     }
 
@@ -304,8 +308,7 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
         /**
          * Construct a path
          */
-        public ShortestPathTree(int source, int[] parent,
-                                List<Integer> searchOrder, double[] costs) {
+        public ShortestPathTree(int source, int[] parent, List<Integer> searchOrder, double[] costs) {
             super(source, parent, searchOrder);
             this.costs = costs;
         }
@@ -318,13 +321,11 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
         }
 
         /**
-         * Print paths from all vertices to the source
+         * 打印从顶点开始的所有最短路径
          */
         public void printAllPaths() {
-            System.out.println("All shortest paths from "
-                    + vertices.get(getRoot()) + " are:");
+            System.out.println("从 " + vertices.get(getRoot()) + "中的所有最短路径有：");
             for (int i = 0; i < costs.length; i++) {
-                // 打印从我到源的路径
                 printPath(i);
                 System.out.println("(cost: " + costs[i] + ")");
             }

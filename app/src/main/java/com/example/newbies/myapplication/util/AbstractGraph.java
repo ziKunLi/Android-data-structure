@@ -118,9 +118,7 @@ public abstract class AbstractGraph<V> implements Graph<V> {
 			neighbors.get(edge.u).add(edge.v);
 		}
 
-		if (edges.get(0) instanceof WeightedEdge){
-			return;
-		}
+
 		/**
 		 * 对邻居排序
 		 */

@@ -270,7 +270,7 @@
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:layout_gravity="top"
-            android:visibility="visible"
+            android:visibility="gone"
             android:gravity="center"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"

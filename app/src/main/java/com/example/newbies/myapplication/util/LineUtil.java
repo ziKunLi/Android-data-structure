@@ -191,8 +191,29 @@ public class LineUtil{
         if(newGraph()){
             return;
         }
-        tree = graph.dfs(startVertex);
+        if(graph instanceof WeightedGraph){
+            tree = ((WeightedGraph)graph).getShortestPath(startVertex);
+        }
+        else {
+            tree = graph.dfs(startVertex);
+        }
         ArrayList<AbstractGraph.Edge> path = tree.findPath(endVertex);
+        drawTree(path);
+    }
+
+    /**
+     * 发送查找最小生成树的消息
+     * @param startVertex
+     */
+    public void sendMinTreeMessage(int startVertex){
+        if(newGraph()){
+            return;
+        }
+        if(graph instanceof UnweightedGraph){
+            return;
+        }
+        tree = ((WeightedGraph)graph).getMinimumSpanningTree(startVertex);
+        ArrayList<AbstractGraph.Edge> path = tree.getTree(startVertex);
         drawTree(path);
     }
 
@@ -238,10 +259,10 @@ public class LineUtil{
         }
 
         if(graphType == GraphType.UNWEIGHT_GRAPH){
-            graph = new UnweightedGraph<>(edges,edges.size());
+            graph = new UnweightedGraph<>(edges,views.size());
         }
         else {
-            graph = new WeightedGraph<>(edges,edges.size());
+            graph = new WeightedGraph<>(edges,views.size());
         }
         Collections.sort(views,new VertexViewComparator());
 

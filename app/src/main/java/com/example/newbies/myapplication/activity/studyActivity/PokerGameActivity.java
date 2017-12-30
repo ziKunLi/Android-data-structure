@@ -617,12 +617,17 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
                 }
                 break;
             case R.id.sure:
-                if(computeResult(expression)){
-                    Toast.makeText(this, "可以！居然对了", Toast.LENGTH_SHORT).show();
+                try {
+                    if(computeResult(expression)){
+                        Toast.makeText(this, "可以！居然对了", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(this, "菜鸡！这都不会", Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){
+                    Toast.makeText(this, "请输入正确的表达式！", Toast.LENGTH_SHORT).show();
                 }
-                else {
-                    Toast.makeText(this, "菜鸡！这都不会", Toast.LENGTH_SHORT).show();
-                }
+                
                 break;
             case R.id.add:
                 inputAnswer.setText(expression + "+");
@@ -660,6 +665,7 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.customizeStart:
                 setSelectPokerPop();
+                inputAnswer.setText("");
                 break;
             case R.id.showAnswer:
                 expressionList = CalculateRatio.getExpression(random1 + 1,random2 + 1, random3 + 1, random4 + 1);
@@ -667,6 +673,7 @@ public class PokerGameActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.randomStart:
                 randomStart();
+                inputAnswer.setText("");
                 break;
             default:
                 break;

@@ -2,7 +2,6 @@ package com.example.newbies.myapplication.util;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -16,7 +15,9 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
     public WeightedGraph() {
     }
 
-    //根据存在数组中的边和顶点建立一个带权图
+    /**
+     * 根据存在数组中的边和顶点建立一个带权图
+     */
     public WeightedGraph(int[][] edges, V[] vertices) {
         super(edges, vertices);
         createQueues(edges, vertices.length);
@@ -136,32 +137,30 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
      * 得到根为指定顶点的最小生成树
      */
     public MST getMinimumSpanningTree(int startingIndex) {
-        List<Integer> T = new ArrayList<Integer>();
-        //T最初只包含startingIndex
-        T.add(startingIndex);
+        List<Integer> vertexs = new ArrayList<>();
+        //初始化vertexs
+        vertexs.add(startingIndex);
 
         int numberOfVertices = vertices.size();
-        // 顶点符节点
         int[] parent = new int[numberOfVertices];
-        // 初始化父节点为-1
+        //初始化parent数组
         for (int i = 0; i < parent.length; i++) {
             parent[i] = -1;
         }
         // 整棵树的权值相当于距离
         double totalWeight = 0;
 
-        //赋值优先队列，用来保证原始队列不变
+        //深度克隆，保证原始队列不变
         List<PriorityQueue<WeightedEdge>> queues = deepClone(this.queues);
 
         //是否找到所有顶点
-        while (T.size() < numberOfVertices) {
-            //寻找与T相邻顶点的最小权值边
+        while (vertexs.size() < numberOfVertices) {
+            //寻找与vertexs相邻顶点的最小权值边
             int v = -1;
             double smallestWeight = Double.MAX_VALUE;
-            for (int u : T) {
-                while (!queues.get(u).isEmpty()
-                        && T.contains(queues.get(u).peek().v)) {
-                    // 如果相邻，则从队列中移除边缘[u]
+
+            for (int u : vertexs) {
+                while (!queues.get(u).isEmpty()&& vertexs.contains(queues.get(u).peek().v)) {
                     // 你的顶点已经在T了
                     queues.get(u).remove();
                 }
@@ -179,11 +178,11 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
                     //如果将v添加到树中，则将成为其父项
                     parent[v] = u;
                 }
-            } // End of for
+            } //结束循环
 
             if (v != -1) {
                 //添加一个新的顶点到树中
-                T.add(v);
+                vertexs.add(v);
             } else {
                 //树未连接，找到部分MST
                 break;
@@ -192,11 +191,11 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
             totalWeight += smallestWeight;
         }
 
-        return new MST(startingIndex, parent, T, totalWeight);
+        return new MST(startingIndex, parent, vertexs, totalWeight);
     }
 
     /**
-     * Clone an array of queues
+     * 深度克隆队列
      */
     private List<PriorityQueue<WeightedEdge>> deepClone(
             List<PriorityQueue<WeightedEdge>> queues) {
@@ -221,8 +220,7 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
          */
         private double totalWeight;
 
-        public MST(int root, int[] parent, List<Integer> searchOrder,
-                   double totalWeight) {
+        public MST(int root, int[] parent, List<Integer> searchOrder, double totalWeight) {
             super(root, parent, searchOrder);
             this.totalWeight = totalWeight;
         }
@@ -237,87 +235,84 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
      */
     public ShortestPathTree getShortestPath(int sourceIndex) {
         // 用于存储顶点
-        List<Integer> T = new ArrayList<Integer>();
-        // T initially contains the sourceVertex;
-        T.add(sourceIndex);
+        List<Integer> vertexs = new ArrayList<Integer>();
+        //
+        vertexs.add(sourceIndex);
 
-        // vertices is defined in AbstractGraph
+        //顶点数量
         int numberOfVertices = vertices.size();
-
-        // parent[v] stores the previous vertex of v in the path
+        //用于存储各个顶点的父节点
         int[] parent = new int[numberOfVertices];
-        // The parent of source is set to -1
+        //将起点处的父节点设为-1
         parent[sourceIndex] = -1;
-
-        // costs[v] stores the cost of the path from v to the source
-        double[] costs = new double[numberOfVertices];
-        for (int i = 0; i < costs.length; i++) {
-            // Initial cost set to infinity
-            costs[i] = Double.MAX_VALUE;
+        //用于存储从某一顶点到起点的权值
+        double[] weights = new double[numberOfVertices];
+        for (int i = 0; i < weights.length; i++) {
+            //设为不可达
+            weights[i] = Double.MAX_VALUE;
         }
-        // Cost of source is 0
-        costs[sourceIndex] = 0;
+        //起点的权值为0
+        weights[sourceIndex] = 0;
 
-        // Get a copy of queues
+        // 获得一个深度克隆的优先队列
         List<PriorityQueue<WeightedEdge>> queues = deepClone(this.queues);
 
-        // Expand T
-        while (T.size() < numberOfVertices) {
-            // Vertex to be determined
+        while (vertexs.size() < numberOfVertices) {
+            //顶点待定
             int v = -1;
-            // Set to infinity
-            double smallestCost = Double.MAX_VALUE;
-            for (int u : T) {
-                while (!queues.get(u).isEmpty()
-                        && T.contains(queues.get(u).peek().v)) {
-                    // Remove the vertex in queue for u
+            //将新加入的点设为不可达
+            double smallestWeight = Double.MAX_VALUE;
+            //循环遍历已经可以到达的点，寻找可以继续到达的点的最短路径
+            for (int u : vertexs) {
+                //将已经访问了的最短的边从队列中删除
+                while (!queues.get(u).isEmpty() && vertexs.contains(queues.get(u).peek().v)) {
+                    //从队列中删除顶点u
                     queues.get(u).remove();
                 }
 
                 if (queues.get(u).isEmpty()) {
-                    // All vertices adjacent to u are in T
+                    //所有以u为起点的顶点都存在于vertexs中
                     continue;
                 }
 
-                WeightedEdge e = queues.get(u).peek();
-                if (costs[u] + e.weight < smallestCost) {
-                    v = e.v;
-                    smallestCost = costs[u] + e.weight;
+                //取出第U个第一条边，也就是最短边
+                WeightedEdge edge = queues.get(u).peek();
+                //判断该边是不是最小边
+                if (weights[u] + edge.weight < smallestWeight) {
+                    v = edge.v;
+                    //对最小权值进行重新赋值
+                    smallestWeight = weights[u] + edge.weight;
                     // 如果V添加到了树中，那么u就是他的parent
                     parent[v] = u;
                 }
             }
             // 循环结束
 
-            // 将一个新的顶点添加到T中
-            T.add(v);
-            costs[v] = smallestCost;
+            // 将一个新的顶点添加到vertex中
+            vertexs.add(v);
+            weights[v] = smallestWeight;
         } //结束循环
 
         // 创建一棵树
-        return new ShortestPathTree(sourceIndex, parent, T, costs);
+        return new ShortestPathTree(sourceIndex, parent, vertexs, weights);
     }
 
     /**
-     * ShortestPathTree is an inner class in WeightedGraph
+     * 最小生成树
      */
     public class ShortestPathTree extends Tree {
-        //成本[v]是从v到源的成本
-        private double[] costs;
-
         /**
-         * Construct a path
+         * 成本[v]是从v到源的成本
          */
-        public ShortestPathTree(int source, int[] parent, List<Integer> searchOrder, double[] costs) {
+        private double[] weights;
+
+        public ShortestPathTree(int source, int[] parent, List<Integer> searchOrder, double[] weights) {
             super(source, parent, searchOrder);
-            this.costs = costs;
+            this.weights = weights;
         }
 
-        /**
-         * Return the cost for a path from the root to vertex v
-         */
         public double getCost(int v) {
-            return costs[v];
+            return weights[v];
         }
 
         /**
@@ -325,9 +320,9 @@ public class WeightedGraph<V> extends AbstractGraph<V> {
          */
         public void printAllPaths() {
             System.out.println("从 " + vertices.get(getRoot()) + "中的所有最短路径有：");
-            for (int i = 0; i < costs.length; i++) {
+            for (int i = 0; i < weights.length; i++) {
                 printPath(i);
-                System.out.println("(cost: " + costs[i] + ")");
+                System.out.println("(cost: " + weights[i] + ")");
             }
         }
     }

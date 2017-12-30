@@ -587,16 +587,26 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
                 try{
                     int start = Integer.parseInt(startVertex.getText().toString()) - 1;
                     int end = Integer.parseInt(endVertex.getText().toString()) - 1;
-                    if(start < 0||start >= end||end > lineUtil.getVertexSize() - 1){
-                        System.out.println(start + "||||" + end);
+                    if(start < 0||start >= lineUtil.getVertexSize() - 1||end < 0||end > lineUtil.getVertexSize() - 1){
                         throw new Exception();
                     }
                     lineUtil.sendPathMessage(start, end);
                 }catch (Exception e){
+                    e.printStackTrace();
                     Toast.makeText(this, "请输入正确的起点或终点！", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.minTree:
+                lineUtil.sendUpdataMessage();
+                try{
+                    int start = Integer.parseInt(startVertex.getText().toString()) - 1;
+                    if(start < 0||start > lineUtil.getVertexSize() - 1){
+                        throw new Exception();
+                    }
+                    lineUtil.sendMinTreeMessage(start);
+                }catch (Exception e){
+                    Toast.makeText(this, "请输入正确的起点！", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.upData:
                 lineUtil.sendUpdataMessage();
@@ -688,6 +698,7 @@ public class JDCShowActivity extends BaseActivity implements View.OnClickListene
         addSite.setOnClickListener(this);
         dfs.setOnClickListener(this);
         bfs.setOnClickListener(this);
+        minTree.setOnClickListener(this);
         shortestPath.setOnClickListener(this);
         updata.setOnClickListener(this);
     }
